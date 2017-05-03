@@ -2,7 +2,6 @@
  * @file SampleDatabase.hpp declares datastructures for sample database handling
  */
 
-
 #pragma once
 
 #include <list>

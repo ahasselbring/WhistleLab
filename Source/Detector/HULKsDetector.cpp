@@ -1,3 +1,7 @@
+/**
+ * @file HULKsDetector.cpp implements methods of the HULKsDetector class
+ */
+
 #include <algorithm>
 #include <cmath>
 #include <complex>

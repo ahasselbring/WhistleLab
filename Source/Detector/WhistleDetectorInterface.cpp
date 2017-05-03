@@ -1,3 +1,7 @@
+/**
+ * @file WhistleDetectorInterface.cpp implements methods shared among detectors
+ */
+
 #include <iostream>
 
 #include "WhistleDetectorInterface.hpp"
