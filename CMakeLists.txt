@@ -19,5 +19,6 @@ target_compile_options(whistle PUBLIC -std=c++14 -Wall -Wextra -pedantic
 target_include_directories(whistle PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 target_link_libraries(whistle -lsndfile)
+target_link_libraries(whistle -lfftw3)
 find_package(Boost COMPONENTS filesystem REQUIRED)
 target_link_libraries(whistle Boost::filesystem)

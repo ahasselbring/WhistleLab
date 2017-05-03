@@ -23,7 +23,7 @@ public:
    * @brief getPreferredBufferSize returns the number of samples that the detector wants to get
    * @return the number of samples that the detector wants to get
    */
-  virtual unsigned int getPreferredBufferSize() = 0;
+  virtual unsigned int getPreferredBufferSize() const = 0;
   /**
    * @brief classify should determine whether a short audio snippet contains a whistle sound
    * @param samples a single channel vector of audio samples that may or may not contain a whistle sound
