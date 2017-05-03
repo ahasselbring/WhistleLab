@@ -115,4 +115,8 @@ private:
   std::list<AudioChannel> audioChannels;
   /// a list of audio files in the database (only valid during constructor)
   std::list<AudioFile> audioFiles;
+  /// the total number of audio samples that is available in the database
+  unsigned int totalAudioLength;
+  /// the total number of whistle samples that is available in the database
+  unsigned int totalWhistleLength;
 };

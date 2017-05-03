@@ -14,6 +14,8 @@
 
 SampleDatabase::SampleDatabase(const std::string& path)
   : dirpath(boost::filesystem::path(path).parent_path())
+  , totalAudioLength(0)
+  , totalWhistleLength(0)
 {
   std::ifstream file(path);
   if (!file.is_open())
@@ -33,6 +35,15 @@ SampleDatabase::SampleDatabase(const std::string& path)
     getAudioChannel(name, channel).whistleLabels.emplace_back(start, end);
   }
   audioFiles.clear();
+
+  for (auto& audioChannel : audioChannels)
+  {
+    totalAudioLength += audioChannel.samples.size();
+    for (auto& whistleLabel : audioChannel.whistleLabels)
+    {
+      totalWhistleLength += whistleLabel.end - whistleLabel.start;
+    }
+  }
 }
 
 AudioSample SampleDatabase::getSample(const unsigned int length) const
