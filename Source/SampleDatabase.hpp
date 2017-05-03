@@ -109,6 +109,14 @@ private:
    * @return a reference to the audio file
    */
   AudioFile& getAudioFile(const std::string& name);
+  /**
+   * @brief getLabel returns the ground truth label for a sample range in an audio channel
+   * @param audioChannel the audio channel for which the label should be computed
+   * @param start the first sample belonging to the range
+   * @param end the first sample not belonging to the range anymore
+   * @return the label (between 0 and 1)
+   */
+  float getLabel(const AudioChannel& audioChannel, const unsigned int start, const unsigned int end) const;
   /// the path in which the whistle database is located
   const boost::filesystem::path dirpath;
   /// a list of audio channels in the database

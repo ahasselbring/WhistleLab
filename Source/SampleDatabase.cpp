@@ -112,3 +112,17 @@ AudioFile& SampleDatabase::getAudioFile(const std::string& name)
   sf_close(f);
   return af;
 }
+
+float SampleDatabase::getLabel(const AudioChannel& audioChannel, const unsigned int start, const unsigned int end) const
+{
+  const unsigned int totalLength = end - start;
+  unsigned int whistleSamples = 0;
+  for (auto& whistleLabel : audioChannel.whistleLabels)
+  {
+    if (start < whistleLabel.end && whistleLabel.start < end)
+    {
+      whistleSamples += std::min(whistleLabel.end, end) - std::max(start, whistleLabel.start);
+    }
+  }
+  return static_cast<float>(whistleSamples) / totalLength;
+}
