@@ -35,11 +35,13 @@ SampleDatabase::SampleDatabase(const std::string& path)
   audioFiles.clear();
 }
 
-void SampleDatabase::getSample(const unsigned int length, std::vector<float>& samples, unsigned int& sampleRate, float& label) const
+AudioSample SampleDatabase::getSample(const unsigned int length) const
 {
-  samples.resize(length, 0);
-  sampleRate = 44100;
-  label = 0;
+  AudioSample as;
+  as.label = 0;
+  as.samples.resize(length, 0);
+  as.sampleRate = 44100;
+  return as;
 }
 
 AudioChannel& SampleDatabase::getAudioChannel(const std::string& name, const unsigned int channel)

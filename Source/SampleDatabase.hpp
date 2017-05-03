@@ -66,6 +66,19 @@ struct AudioFile final
 };
 
 /**
+ * @struct AudioSample represents a audio sample (whistle or not) to be passed to a classifier
+ */
+struct AudioSample final
+{
+  /// the actual label of the whistle function
+  float label;
+  /// the sample rate of the sample
+  unsigned int sampleRate;
+  /// the actual sequence of audio samples
+  std::vector<float> samples;
+};
+
+/**
  * @class SampleDatabase is a database containing audio channels with whistle labels
  */
 class SampleDatabase final
@@ -79,10 +92,9 @@ public:
   /**
    * @brief getSample gets a sample (a sequence of audio samples) from the database (hopefully 50% whistle and 50% non-whistle)
    * @param length the desired length (in samples) of the sample
-   * @param samples is filled with the audio samples
-   * @param label the label for the sample
+   * @return an audio sample
    */
-  void getSample(const unsigned int length, std::vector<float>& samples, unsigned int& sampleRate, float& label) const;
+  AudioSample getSample(const unsigned int length) const;
 private:
   /**
    * @brief getAudioChannel looks for an audio channel and loads it if it is not already loaded

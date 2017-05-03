@@ -5,10 +5,7 @@
 
 void WhistleDetectorInterface::evaluateOnDatabase(const SampleDatabase& db)
 {
-  std::vector<float> samples;
-  float label;
-  unsigned int sampleRate;
-  db.getSample(getPreferredBufferSize(), samples, sampleRate, label);
-  std::cout << "Predicted label: " << classify(samples, sampleRate) << '\n';
-  std::cout << "Actual label: " << label << '\n';
+  AudioSample as = db.getSample(getPreferredBufferSize());
+  std::cout << "Predicted label: " << classify(as.samples, as.sampleRate) << '\n';
+  std::cout << "Actual label: " << as.label << '\n';
 }
