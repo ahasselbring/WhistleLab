@@ -76,6 +76,13 @@ public:
    * @param path the path to the database file
    */
   SampleDatabase(const std::string& path);
+  /**
+   * @brief getSample gets a sample (a sequence of audio samples) from the database (hopefully 50% whistle and 50% non-whistle)
+   * @param length the desired length (in samples) of the sample
+   * @param samples is filled with the audio samples
+   * @param label the label for the sample
+   */
+  void getSample(const unsigned int length, std::vector<float>& samples, unsigned int& sampleRate, float& label) const;
 private:
   /**
    * @brief getAudioChannel looks for an audio channel and loads it if it is not already loaded
