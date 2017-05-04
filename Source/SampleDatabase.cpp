@@ -46,13 +46,9 @@ SampleDatabase::SampleDatabase(const std::string& path)
   }
 }
 
-AudioSample SampleDatabase::getSample(const unsigned int length) const
+const std::list<AudioChannel>& SampleDatabase::getAudioChannels() const
 {
-  AudioSample as;
-  as.label = 0;
-  as.samples.resize(length, 0);
-  as.sampleRate = 44100;
-  return as;
+  return audioChannels;
 }
 
 AudioChannel& SampleDatabase::getAudioChannel(const std::string& name, const unsigned int channel)
@@ -111,18 +107,4 @@ AudioFile& SampleDatabase::getAudioFile(const std::string& name)
   }
   sf_close(f);
   return af;
-}
-
-float SampleDatabase::getLabel(const AudioChannel& audioChannel, const unsigned int start, const unsigned int end) const
-{
-  const unsigned int totalLength = end - start;
-  unsigned int whistleSamples = 0;
-  for (auto& whistleLabel : audioChannel.whistleLabels)
-  {
-    if (start < whistleLabel.end && whistleLabel.start < end)
-    {
-      whistleSamples += std::min(whistleLabel.end, end) - std::max(start, whistleLabel.start);
-    }
-  }
-  return static_cast<float>(whistleSamples) / totalLength;
 }

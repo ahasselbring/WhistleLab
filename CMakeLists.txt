@@ -7,6 +7,8 @@ set(SOURCES
   Source/Main.cpp
   Source/SampleDatabase.cpp
   Source/SampleDatabase.hpp
+  Source/SampleProvider.cpp
+  Source/SampleProvider.hpp
   Source/Detector/HULKsDetector.cpp
   Source/Detector/HULKsDetector.hpp
   Source/Detector/WhistleDetectorInterface.cpp
