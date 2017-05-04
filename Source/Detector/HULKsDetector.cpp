@@ -12,9 +12,10 @@
 
 HULKsDetector::HULKsDetector()
   : realBuffer(bufferSize)
-  , complexBuffer(bufferSize)
+  , complexBuffer(bufferSize / 2 + 1)
   , fftPlan(fftw_plan_dft_r2c_1d(bufferSize, realBuffer.data(), reinterpret_cast<fftw_complex*>(complexBuffer.data()), FFTW_ESTIMATE))
 {
+  static_assert(bufferSize % 2 == 0, "The buffer size has to be even!");
 }
 
 HULKsDetector::~HULKsDetector()
@@ -38,11 +39,11 @@ bool HULKsDetector::classify(const std::vector<float>& samples, const unsigned i
   fftw_execute(fftPlan);
 
   const std::vector<std::complex<double>>& freqData = complexBuffer;
-  const double freqResolution = static_cast<double>(sampleRate) / bufferSize;
-  const unsigned int minFreqIndex = std::ceil(minFrequency / freqResolution);
-  const unsigned int maxFreqIndex = std::ceil(maxFrequency / freqResolution);
+  const double freqResolution = static_cast<double>(bufferSize) / sampleRate;
+  const unsigned int minFreqIndex = std::ceil(minFrequency * freqResolution);
+  const unsigned int maxFreqIndex = std::ceil(maxFrequency * freqResolution);
 
-  if (maxFreqIndex > bufferSize)
+  if (maxFreqIndex >= freqData.size())
   {
     std::cerr << "HULKsDetector: maxFreqIndex " << maxFreqIndex << " is larger than the Nyquist frequency!\n";
     return false;
@@ -53,8 +54,8 @@ bool HULKsDetector::classify(const std::vector<float>& samples, const unsigned i
 
   for (unsigned int i = minFreqIndex; i < freqData.size(); i++)
   {
-    // The division by freqResolution is not strictly necessary since it cancels out in the division below.
-    double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) / freqResolution;
+    // The multiplication by freqResolution is not strictly necessary since it cancels out in the division below.
+    double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
     if (i < maxFreqIndex)
     {
       power += abs2;
