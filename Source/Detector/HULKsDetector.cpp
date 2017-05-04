@@ -65,6 +65,9 @@ bool HULKsDetector::classify(const std::vector<float>& samples, const unsigned i
       stopBandPower += abs2;
     }
   }
+  std::cout << "Whistle band power: " << power << '\n';
+  std::cout << "Stop band power: " << stopBandPower << '\n';
+  std::cout << "Ratio: " << (power / stopBandPower) << '\n';
 
   return power / stopBandPower > threshold;
 }

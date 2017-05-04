@@ -40,11 +40,11 @@ public:
 private:
   /// the buffer size (a parameter)
   static constexpr unsigned int bufferSize = 8192;
-  /// the buffer size (a parameter)
+  /// the minimum frequency of the whistle band (a parameter)
   static constexpr double minFrequency = 2000;
-  /// the buffer size (a parameter)
+  /// the maximum frequency of the whistle band (a parameter)
   static constexpr double maxFrequency = 4000;
-  /// the threshold for power over stop band power (a parameter)
+  /// the threshold for whistle power over stop band power (a parameter)
   static constexpr double threshold = 50;
   /// a buffer for the real input of the FFT
   std::vector<double> realBuffer;
