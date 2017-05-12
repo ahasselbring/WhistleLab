@@ -22,5 +22,6 @@ target_include_directories(whistle PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 target_link_libraries(whistle -lsndfile)
 target_link_libraries(whistle -lfftw3)
+target_link_libraries(whistle -lyaml-cpp)
 find_package(Boost COMPONENTS filesystem REQUIRED)
 target_link_libraries(whistle Boost::filesystem)

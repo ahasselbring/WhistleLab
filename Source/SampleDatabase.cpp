@@ -6,8 +6,10 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 #include <sndfile.h>
+#include <yaml-cpp/yaml.h>
 
 #include "SampleDatabase.hpp"
 
@@ -17,23 +19,29 @@ SampleDatabase::SampleDatabase(const std::string& path)
   , totalAudioLength(0)
   , totalWhistleLength(0)
 {
-  std::ifstream file(path);
-  if (!file.is_open())
+  const YAML::Node root = YAML::LoadFile(path);
+  if (!root.IsDefined() || !root.IsMap())
   {
-    throw std::runtime_error("Could not open sample database!");
+    throw std::runtime_error("Root element of YAML file must be a map!");
+  }
+  const YAML::Node channels = root["audioChannels"];
+  if (!channels.IsDefined() || !channels.IsSequence())
+  {
+    throw std::runtime_error("There must be a sequence called audioChannels in the file!");
+  }
+  for (const auto channel : channels)
+  {
+    if (!channel["path"].IsDefined() || !channel["channel"].IsDefined() || !channel["start"].IsDefined() || !channel["end"].IsDefined())
+    {
+      throw std::runtime_error("An element of the audioChannels sequence is not correct!");
+    }
+    const std::string filePath = channel["path"].as<std::string>();
+    const unsigned int channelNumber = channel["channel"].as<unsigned int>();
+    const unsigned int startSample = channel["start"].as<unsigned int>();
+    const unsigned int endSample = channel["end"].as<unsigned int>();
+    getAudioChannel(filePath, channelNumber).whistleLabels.emplace_back(startSample, endSample);
   }
 
-  std::string name;
-  unsigned int channel, start, end;
-  while (true)
-  {
-    file >> name >> channel >> start >> end;
-    if (file.eof())
-    {
-      break;
-    }
-    getAudioChannel(name, channel).whistleLabels.emplace_back(start, end);
-  }
   audioFiles.clear();
 
   for (auto& audioChannel : audioChannels)
