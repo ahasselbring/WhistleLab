@@ -12,24 +12,33 @@ SampleProvider::SampleProvider(const SampleDatabase& sampleDatabase)
 {
 }
 
-AudioSample SampleProvider::getSample(const unsigned int length) const
+AudioSample SampleProvider::getSampleByOffset(const unsigned int offset, const unsigned int length) const
 {
   AudioSample as;
+  unsigned int remainingOffset = offset;
   for (auto& audioChannel : sampleDatabase.getAudioChannels())
   {
-    if (audioChannel.samples.size() < length)
+    if (remainingOffset + length <= audioChannel.samples.size())
     {
-      continue;
+      as.label = getLabel(audioChannel, remainingOffset, remainingOffset + length);
+      as.samples.resize(length);
+      std::copy(audioChannel.samples.begin() + remainingOffset, audioChannel.samples.begin() + remainingOffset + length, as.samples.begin());
+      as.sampleRate = audioChannel.sampleRate;
+      return as;
     }
-    as.label = getLabel(audioChannel, 0, length);
-    as.samples.resize(length);
-    std::copy(audioChannel.samples.begin(), audioChannel.samples.begin() + length, as.samples.begin());
-    as.sampleRate = audioChannel.sampleRate;
-    return as;
+    else
+    {
+      if (remainingOffset < audioChannel.samples.size())
+      {
+        remainingOffset = 0;
+      }
+      else
+      {
+        remainingOffset -= audioChannel.samples.size();
+      }
+    }
   }
-  as.label = 0;
-  as.samples.resize(length, 0);
-  as.sampleRate = 44100;
+  as.sampleRate = 0;
   return as;
 }
 

@@ -23,7 +23,7 @@ struct AudioSample final
 /**
  * @class SampleProvider is a class that can provide training/test samples with some required properties
  */
-class SampleProvider
+class SampleProvider final
 {
 public:
   /**
@@ -32,11 +32,12 @@ public:
    */
   SampleProvider(const SampleDatabase& sampleDatabase);
   /**
-   * @brief getSample gets a sample (a sequence of audio samples) from the database (hopefully 50% whistle and 50% non-whistle)
+   * @brief getSampleByOffset gets a sample (a sequence of audio samples) from the database with a given offset from the start
+   * @param offset the offset in the complete audio database
    * @param length the desired length (in samples) of the sample
    * @return an audio sample
    */
-  AudioSample getSample(const unsigned int length) const;
+  AudioSample getSampleByOffset(const unsigned int offset, const unsigned int length) const;
 private:
   /**
    * @brief getLabel returns the ground truth label for a sample range in an audio channel
