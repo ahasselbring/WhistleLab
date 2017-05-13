@@ -29,7 +29,12 @@ int main(const int argc, const char* argv[])
         return EXIT_FAILURE;
       }
       SampleDatabase db(argv[2]);
-      auto wd = WhistleDetectorFactoryBase::make("HULKsDetector");
+      if (argc < 4)
+      {
+        std::cerr << "A detector name must be given!\n";
+        return EXIT_FAILURE;
+      }
+      auto wd = WhistleDetectorFactoryBase::make(argv[3]);
       wd->evaluateOnDatabase(db);
     }
     else
