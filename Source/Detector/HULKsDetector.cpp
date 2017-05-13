@@ -55,7 +55,7 @@ bool HULKsDetector::classify(const std::vector<float>& samples, const unsigned i
   for (unsigned int i = minFreqIndex; i < freqData.size(); i++)
   {
     // The multiplication by freqResolution is not strictly necessary since it cancels out in the division below.
-    double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
+    const double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
     if (i < maxFreqIndex)
     {
       power += abs2;
