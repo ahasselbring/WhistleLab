@@ -1,15 +1,15 @@
 /**
- * @file WhistleDetectorInterface.cpp implements methods shared among detectors
+ * @file WhistleDetectorBase.cpp implements methods shared among detectors
  */
 
 #include <iostream>
 
 #include "SampleProvider.hpp"
 
-#include "WhistleDetectorInterface.hpp"
+#include "WhistleDetectorBase.hpp"
 
 
-void WhistleDetectorInterface::evaluateOnDatabase(const SampleDatabase& db)
+void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db)
 {
   const unsigned int maxNumberOfTests = 100000;
   SampleProvider sampleProvider(db);

@@ -11,8 +11,12 @@ set(SOURCES
   Source/SampleProvider.hpp
   Source/Detector/HULKsDetector.cpp
   Source/Detector/HULKsDetector.hpp
-  Source/Detector/WhistleDetectorInterface.cpp
-  Source/Detector/WhistleDetectorInterface.hpp
+  Source/Detector/WhistleDetector.hpp
+  Source/Detector/WhistleDetectorBase.cpp
+  Source/Detector/WhistleDetectorBase.hpp
+  Source/Detector/WhistleDetectorFactory.hpp
+  Source/Detector/WhistleDetectorFactoryBase.cpp
+  Source/Detector/WhistleDetectorFactoryBase.hpp
 )
 
 add_executable(whistle ${SOURCES})

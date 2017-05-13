@@ -1,5 +1,5 @@
 /**
- * @file WhistleDetectorInterface.hpp declares an interface for whistle detectors
+ * @file WhistleDetectorBase.hpp declares an interface for whistle detectors
  */
 
 #pragma once
@@ -10,15 +10,15 @@
 
 
 /**
- * @class WhistleDetectorInterface is an interface for single channel whistle detectors
+ * @class WhistleDetectorBase is an interface for single channel whistle detectors
  */
-class WhistleDetectorInterface
+class WhistleDetectorBase
 {
 public:
   /**
-   * @brief ~WhistleDetectorInterface virtual destructor for polymorphism
+   * @brief ~WhistleDetectorBase virtual destructor for polymorphism
    */
-  virtual ~WhistleDetectorInterface() = default;
+  virtual ~WhistleDetectorBase() = default;
   /**
    * @brief getPreferredBufferSize returns the number of samples that the detector wants to get
    * @return the number of samples that the detector wants to get
@@ -35,5 +35,5 @@ public:
    * @brief evaluateOnDatabase evaluates a detector on a given database
    * @param db the database on which the detector is evaluated
    */
-  void evaluateOnDatabase(const SampleDatabase& db);
+  virtual void evaluateOnDatabase(const SampleDatabase& db);
 };

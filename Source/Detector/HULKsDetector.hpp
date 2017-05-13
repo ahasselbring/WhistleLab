@@ -8,13 +8,13 @@
 
 #include <fftw3.h>
 
-#include "WhistleDetectorInterface.hpp"
+#include "WhistleDetector.hpp"
 
 
 /**
  * @brief HULKsDetector is the whistle detector of the SPL team HULKs
  */
-class HULKsDetector : public WhistleDetectorInterface
+class HULKsDetector : public WhistleDetector<HULKsDetector>
 {
 public:
   /**

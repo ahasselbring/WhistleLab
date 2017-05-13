@@ -3,34 +3,45 @@
  */
 
 #include <cstdlib>
+#include <cstring>
 #include <exception>
 #include <iostream>
 
-#include "Detector/HULKsDetector.hpp"
-#include "Detector/WhistleDetectorInterface.hpp"
+#include "Detector/WhistleDetectorBase.hpp"
+#include "Detector/WhistleDetectorFactoryBase.hpp"
 #include "SampleDatabase.hpp"
 
 
 int main(const int argc, const char* argv[])
 {
-  if (argc != 2)
-  {
-    std::cerr << "A path to a sample database needs to be passed!";
-    return EXIT_FAILURE;
-  }
-  WhistleDetectorInterface* wd = nullptr;
   try
   {
-    SampleDatabase db(argv[1]);
-    wd = new HULKsDetector;
-    wd->evaluateOnDatabase(db);
+    if (argc < 2)
+    {
+      std::cerr << "An operation must be given!\n";
+      return EXIT_FAILURE;
+    }
+    if (!std::strcmp(argv[1], "evaluate"))
+    {
+      if (argc < 3)
+      {
+        std::cerr << "A database must be given!\n";
+        return EXIT_FAILURE;
+      }
+      SampleDatabase db(argv[2]);
+      auto wd = WhistleDetectorFactoryBase::make("HULKsDetector");
+      wd->evaluateOnDatabase(db);
+    }
+    else
+    {
+      std::cerr << "The operation " << argv[1] << "is not implemented!\n";
+      return EXIT_FAILURE;
+    }
   }
   catch (const std::exception& e)
   {
-    delete wd;
     std::cerr << "Exception caught in main: " << e.what() << '\n';
     return EXIT_FAILURE;
   }
-  delete wd;
   return EXIT_SUCCESS;
 }
