@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(whistle)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(SOURCES
   Source/Main.cpp
@@ -19,13 +22,16 @@ set(SOURCES
   Source/Detector/WhistleDetectorFactoryBase.hpp
 )
 
+find_package(Boost COMPONENTS filesystem REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+
 add_executable(whistle ${SOURCES})
-target_compile_options(whistle PUBLIC -std=c++14 -Wall -Wextra -pedantic
+target_compile_options(whistle PRIVATE -std=c++14 -Wall -Wextra -pedantic
   -Werror -pedantic-errors)
 target_include_directories(whistle PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 target_link_libraries(whistle -lsndfile)
 target_link_libraries(whistle -lfftw3)
 target_link_libraries(whistle -lyaml-cpp)
-find_package(Boost COMPONENTS filesystem REQUIRED)
 target_link_libraries(whistle Boost::filesystem)
+target_link_libraries(whistle Qt5::Widgets)
