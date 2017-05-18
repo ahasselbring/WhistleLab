@@ -20,6 +20,8 @@ set(SOURCES
   Source/Detector/WhistleDetectorFactory.hpp
   Source/Detector/WhistleDetectorFactoryBase.cpp
   Source/Detector/WhistleDetectorFactoryBase.hpp
+  Source/UI/MainWindow.cpp
+  Source/UI/MainWindow.hpp
 )
 
 find_package(Boost COMPONENTS filesystem REQUIRED)
