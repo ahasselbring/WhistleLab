@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
+#include <QSignalMapper>
 #include <QStringList>
 
 
@@ -37,6 +38,11 @@ private slots:
    * @brief closeFile is called by a close action
    */
   void closeFile();
+  /**
+   * @brief evaluateDetector evaluates a detector on the currently opened database
+   * @param name the name of the detector
+   */
+  void evaluateDetector(const QString& name);
 private:
   /**
    * @brief closeEvent handles a window close event to close the file
@@ -58,8 +64,12 @@ private:
   QAction* fileExitAction = nullptr;
   /// the menu containing file actions
   QMenu* fileMenu = nullptr;
+  /// the menu containing evaluate actions
+  QMenu* evaluateMenu = nullptr;
   /// the settings of this application
   QSettings settings;
+  /// the mapper that maps evaluate actions to a single evaluate slot
+  QSignalMapper evaluateMapper;
   /// the list of recent files
   QStringList recentFiles;
   /// the open sample database
