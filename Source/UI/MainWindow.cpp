@@ -32,9 +32,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(fileExitAction, &QAction::triggered, this, &QWidget::close);
 
   fileMenu = menuBar()->addMenu(tr("&File"));
-  fileMenu->addAction(fileOpenAction);
-  fileMenu->addAction(fileCloseAction);
-  fileMenu->addAction(fileExitAction);
+  connect(fileMenu, &QMenu::aboutToShow, this, &MainWindow::updateFileMenu);
+  connect(&recentFileMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped), this, &MainWindow::openFile);
+  updateFileMenu();
 
   evaluateMenu = menuBar()->addMenu(tr("E&valuate"));
   connect(&evaluateMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped), this, &MainWindow::evaluateDetector);
@@ -62,31 +62,6 @@ void MainWindow::open()
   openFile(fileName);
 }
 
-void MainWindow::closeFile()
-{
-  delete sampleDatabase;
-  sampleDatabase = nullptr;
-
-  fileCloseAction->setEnabled(false);
-}
-
-void MainWindow::evaluateDetector(const QString& name)
-{
-  if (sampleDatabase == nullptr)
-  {
-    return;
-  }
-
-  auto detector = WhistleDetectorFactoryBase::make(name.toStdString());
-  detector->evaluateOnDatabase(*sampleDatabase);
-}
-
-void MainWindow::closeEvent(QCloseEvent* event)
-{
-  closeFile();
-  QMainWindow::closeEvent(event);
-}
-
 void MainWindow::openFile(const QString& fileName)
 {
   closeFile();
@@ -112,4 +87,51 @@ void MainWindow::openFile(const QString& fileName)
   fileCloseAction->setEnabled(true);
 
   sampleDatabase = new SampleDatabase(fileName.toStdString());
+}
+
+void MainWindow::closeFile()
+{
+  delete sampleDatabase;
+  sampleDatabase = nullptr;
+
+  fileCloseAction->setEnabled(false);
+}
+
+void MainWindow::evaluateDetector(const QString& name)
+{
+  if (sampleDatabase == nullptr)
+  {
+    return;
+  }
+
+  auto detector = WhistleDetectorFactoryBase::make(name.toStdString());
+  detector->evaluateOnDatabase(*sampleDatabase);
+}
+
+void MainWindow::updateFileMenu()
+{
+  fileMenu->clear();
+  fileMenu->addAction(fileOpenAction);
+  fileMenu->addAction(fileCloseAction);
+
+  if (!recentFiles.isEmpty())
+  {
+    fileMenu->addSeparator();
+    char shortcut = '1';
+    for (auto& file : recentFiles)
+    {
+      QAction* action = fileMenu->addAction("&" + QString(shortcut++) + " " + QFileInfo(file).fileName());
+      recentFileMapper.setMapping(action, file);
+      connect(action, &QAction::triggered, &recentFileMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
+    }
+  }
+
+  fileMenu->addSeparator();
+  fileMenu->addAction(fileExitAction);
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+  closeFile();
+  QMainWindow::closeEvent(event);
 }

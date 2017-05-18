@@ -35,6 +35,11 @@ private slots:
    */
   void open();
   /**
+   * @brief openFile replaces the open sample database with another one loaded from a file
+   * @param fileName the name of the file that should be loaded
+   */
+  void openFile(const QString& fileName);
+  /**
    * @brief closeFile is called by a close action
    */
   void closeFile();
@@ -43,17 +48,16 @@ private slots:
    * @param name the name of the detector
    */
   void evaluateDetector(const QString& name);
+  /**
+   * @brief updateFileMenu updates the recent files in the file menu
+   */
+  void updateFileMenu();
 private:
   /**
    * @brief closeEvent handles a window close event to close the file
    * @param event the close event
    */
   virtual void closeEvent(QCloseEvent* event) override;
-  /**
-   * @brief openFile replaces the open sample database with another one loaded from a file
-   * @param fileName the name of the file that should be loaded
-   */
-  void openFile(const QString& fileName);
   /// the maximum number of entries in the recent files list
   static constexpr int maxNumberOfRecentFiles = 8;
   /// an action that creates a file open dialog
@@ -70,6 +74,8 @@ private:
   QSettings settings;
   /// the mapper that maps evaluate actions to a single evaluate slot
   QSignalMapper evaluateMapper;
+  /// the mapper that maps open recent file actions to a single open file slot
+  QSignalMapper recentFileMapper;
   /// the list of recent files
   QStringList recentFiles;
   /// the open sample database
