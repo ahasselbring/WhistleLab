@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <typeindex>
 
 
@@ -36,6 +37,11 @@ public:
    * @return a shared pointer to the newly created detector instance
    */
   static std::shared_ptr<WhistleDetectorBase> make(const std::string& name);
+  /**
+   * @brief getDetectorNames returns the names of all registered detectors
+   * @return a list of the names of all registered detectors
+   */
+  static std::vector<std::string> getDetectorNames();
   /**
    * @brief use is called from somewhere to force the construction of a factory
    */

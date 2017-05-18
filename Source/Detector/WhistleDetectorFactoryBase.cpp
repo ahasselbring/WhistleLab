@@ -31,6 +31,16 @@ std::shared_ptr<WhistleDetectorBase> WhistleDetectorFactoryBase::make(const std:
   throw std::runtime_error("No factory could create a detector for a given name!");
 }
 
+std::vector<std::string> WhistleDetectorFactoryBase::getDetectorNames()
+{
+  std::vector<std::string> result;
+  for (const WhistleDetectorFactoryBase* factory = first; factory != nullptr; factory = factory->next)
+  {
+    result.push_back(factory->name);
+  }
+  return result;
+}
+
 void WhistleDetectorFactoryBase::use() const
 {
 }
