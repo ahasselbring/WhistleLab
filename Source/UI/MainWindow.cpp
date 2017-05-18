@@ -4,6 +4,7 @@
 
 #include <QAction>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QMenu>
 #include <QMenuBar>
 #include <QString>
@@ -16,6 +17,7 @@
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , settings("HULKs", "WhistleLab")
+  , recentFiles(settings.value("RecentFiles").toStringList())
 {
   fileOpenAction = new QAction(tr("&Open"), this);
   connect(fileOpenAction, &QAction::triggered, this, &MainWindow::open);
@@ -65,6 +67,24 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::openFile(const QString& fileName)
 {
   closeFile();
+
+  QFileInfo fileInfo(fileName);
+  QString filePath = fileInfo.absoluteDir().canonicalPath() + '/' + fileInfo.fileName();
+
+  recentFiles.removeAll(filePath);
+
+  if (!fileInfo.exists())
+  {
+    settings.setValue("RecentFiles", recentFiles);
+    return;
+  }
+
+  recentFiles.prepend(filePath);
+  while (recentFiles.size() > maxNumberOfRecentFiles)
+  {
+    recentFiles.removeLast();
+  }
+  settings.setValue("RecentFiles", recentFiles);
 
   fileCloseAction->setEnabled(true);
 

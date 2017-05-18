@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
+#include <QStringList>
 
 
 class SampleDatabase;
@@ -47,6 +48,8 @@ private:
    * @param fileName the name of the file that should be loaded
    */
   void openFile(const QString& fileName);
+  /// the maximum number of entries in the recent files list
+  static constexpr int maxNumberOfRecentFiles = 8;
   /// an action that creates a file open dialog
   QAction* fileOpenAction = nullptr;
   /// an action that closes a file
@@ -57,6 +60,8 @@ private:
   QMenu* fileMenu = nullptr;
   /// the settings of this application
   QSettings settings;
+  /// the list of recent files
+  QStringList recentFiles;
   /// the open sample database
   SampleDatabase* sampleDatabase = nullptr;
 };
