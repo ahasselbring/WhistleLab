@@ -57,6 +57,10 @@ private slots:
    * @brief updateFileMenu updates the recent files in the file menu
    */
   void updateFileMenu();
+  /**
+   * @brief updateViewMenu updates the view menu
+   */
+  void updateViewMenu();
 private:
   /**
    * @brief closeEvent handles a window close event to close the file
@@ -75,6 +79,8 @@ private:
   QMenu* fileMenu = nullptr;
   /// the menu containing evaluate actions
   QMenu* evaluateMenu = nullptr;
+  /// the menu containing view actions
+  QMenu* viewMenu = nullptr;
   /// the menu containing help actions
   QMenu* helpMenu = nullptr;
   /// the settings of this application

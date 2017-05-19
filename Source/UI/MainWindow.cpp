@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(&recentFileMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped), this, &MainWindow::openFile);
   updateFileMenu();
 
-  evaluateMenu = menuBar()->addMenu(tr("E&valuate"));
+  evaluateMenu = menuBar()->addMenu(tr("&Evaluate"));
   connect(&evaluateMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped), this, &MainWindow::evaluateDetector);
   auto detectorNames = WhistleDetectorFactoryBase::getDetectorNames();
   for (auto& name : detectorNames)
@@ -48,6 +48,10 @@ MainWindow::MainWindow(QWidget* parent)
     evaluateMapper.setMapping(action, QString::fromStdString(name));
     connect(action, &QAction::triggered, &evaluateMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
   }
+
+  viewMenu = menuBar()->addMenu(tr("&View"));
+  connect(viewMenu, &QMenu::aboutToShow, this, &MainWindow::updateViewMenu);
+  updateViewMenu();
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
   QAction* aboutAction = helpMenu->addAction(tr("&About"));
@@ -152,6 +156,16 @@ void MainWindow::updateFileMenu()
 
   fileMenu->addSeparator();
   fileMenu->addAction(fileExitAction);
+}
+
+void MainWindow::updateViewMenu()
+{
+  viewMenu->clear();
+
+  if (sampleDatabaseWidget != nullptr)
+  {
+    viewMenu->addAction(sampleDatabaseWidget->toggleViewAction());
+  }
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

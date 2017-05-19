@@ -11,6 +11,7 @@ SampleDatabaseWidget::SampleDatabaseWidget(QWidget* parent)
   : QDockWidget(parent)
 {
   setAllowedAreas(Qt::LeftDockWidgetArea);
+  setWindowTitle(tr("Sample Database"));
 
   treeWidget = new QTreeWidget(this);
   setWidget(treeWidget);
