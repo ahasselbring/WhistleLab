@@ -22,6 +22,8 @@ set(SOURCES
   Source/Detector/WhistleDetectorFactoryBase.hpp
   Source/UI/MainWindow.cpp
   Source/UI/MainWindow.hpp
+  Source/UI/SampleDatabaseWidget.cpp
+  Source/UI/SampleDatabaseWidget.hpp
 )
 
 find_package(Boost COMPONENTS filesystem REQUIRED)

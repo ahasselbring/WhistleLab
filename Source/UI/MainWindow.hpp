@@ -11,6 +11,7 @@
 
 
 class SampleDatabase;
+class SampleDatabaseWidget;
 class QAction;
 class QCloseEvent;
 class QMenu;
@@ -86,4 +87,6 @@ private:
   QStringList recentFiles;
   /// the open sample database
   SampleDatabase* sampleDatabase = nullptr;
+  /// the widget that views the sample database
+  SampleDatabaseWidget* sampleDatabaseWidget = nullptr;
 };

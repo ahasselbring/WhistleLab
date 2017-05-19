@@ -16,6 +16,7 @@
 #include "SampleDatabase.hpp"
 
 #include "MainWindow.hpp"
+#include "SampleDatabaseWidget.hpp"
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -101,11 +102,19 @@ void MainWindow::openFile(const QString& fileName)
 
   fileCloseAction->setEnabled(true);
 
+  Q_ASSERT(sampleDatabase == nullptr);
   sampleDatabase = new SampleDatabase(fileName.toStdString());
+
+  Q_ASSERT(sampleDatabaseWidget == nullptr);
+  sampleDatabaseWidget = new SampleDatabaseWidget(this);
+  addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
 }
 
 void MainWindow::closeFile()
 {
+  delete sampleDatabaseWidget;
+  sampleDatabaseWidget = nullptr;
+
   delete sampleDatabase;
   sampleDatabase = nullptr;
 
