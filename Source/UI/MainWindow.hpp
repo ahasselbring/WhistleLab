@@ -31,6 +31,10 @@ public:
   MainWindow(QWidget* parent = 0);
 private slots:
   /**
+   * @brief about shows a message box with infos about this program
+   */
+  void about();
+  /**
    * @brief open is called by an open action
    */
   void open();
@@ -70,6 +74,8 @@ private:
   QMenu* fileMenu = nullptr;
   /// the menu containing evaluate actions
   QMenu* evaluateMenu = nullptr;
+  /// the menu containing help actions
+  QMenu* helpMenu = nullptr;
   /// the settings of this application
   QSettings settings;
   /// the mapper that maps evaluate actions to a single evaluate slot

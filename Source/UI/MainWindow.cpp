@@ -3,10 +3,12 @@
  */
 
 #include <QAction>
+#include <QApplication>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMenu>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QString>
 
 #include "Detector/WhistleDetectorBase.hpp"
@@ -46,8 +48,21 @@ MainWindow::MainWindow(QWidget* parent)
     connect(action, &QAction::triggered, &evaluateMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
   }
 
+  helpMenu = menuBar()->addMenu(tr("&Help"));
+  QAction* aboutAction = helpMenu->addAction(tr("&About"));
+  connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
+  helpMenu->addAction(aboutAction);
+  QAction* aboutQtAction = helpMenu->addAction(tr("About &Qt"));
+  connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
+  helpMenu->addAction(aboutQtAction);
+
   setWindowTitle(tr("WhistleLab"));
   setUnifiedTitleAndToolBarOnMac(true);
+}
+
+void MainWindow::about()
+{
+  QMessageBox::about(this, tr("About"), tr("WhistleLab 4.1 Ultimate Edition Platinum"));
 }
 
 void MainWindow::open()
