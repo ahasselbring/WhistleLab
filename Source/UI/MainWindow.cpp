@@ -10,10 +10,10 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QString>
+#include <QThread>
 
-#include "Detector/WhistleDetectorBase.hpp"
 #include "Detector/WhistleDetectorFactoryBase.hpp"
-#include "SampleDatabase.hpp"
+#include "Engine/WhistleLabEngine.hpp"
 
 #include "MainWindow.hpp"
 #include "SampleDatabaseWidget.hpp"
@@ -24,6 +24,10 @@ MainWindow::MainWindow(QWidget* parent)
   , settings("HULKs", "WhistleLab")
   , recentFiles(settings.value("RecentFiles").toStringList())
 {
+  workerThread = new QThread(this);
+  whistleLabEngine = new WhistleLabEngine;
+  whistleLabEngine->moveToThread(workerThread);
+
   fileOpenAction = new QAction(tr("&Open"), this);
   connect(fileOpenAction, &QAction::triggered, this, &MainWindow::open);
 
@@ -36,11 +40,13 @@ MainWindow::MainWindow(QWidget* parent)
 
   fileMenu = menuBar()->addMenu(tr("&File"));
   connect(fileMenu, &QMenu::aboutToShow, this, &MainWindow::updateFileMenu);
-  connect(&recentFileMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped), this, &MainWindow::openFile);
+  connect(&recentFileMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped),
+    this, &MainWindow::openFile);
   updateFileMenu();
 
   evaluateMenu = menuBar()->addMenu(tr("&Evaluate"));
-  connect(&evaluateMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped), this, &MainWindow::evaluateDetector);
+  connect(&evaluateMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped),
+    whistleLabEngine, &WhistleLabEngine::evaluateDetector);
   auto detectorNames = WhistleDetectorFactoryBase::getDetectorNames();
   for (auto& name : detectorNames)
   {
@@ -61,8 +67,18 @@ MainWindow::MainWindow(QWidget* parent)
   connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
   helpMenu->addAction(aboutQtAction);
 
+  connect(this, &MainWindow::changeFile, whistleLabEngine, &WhistleLabEngine::changeFile);
+
   setWindowTitle(tr("WhistleLab"));
   setUnifiedTitleAndToolBarOnMac(true);
+
+  workerThread->start(QThread::NormalPriority);
+}
+
+MainWindow::~MainWindow()
+{
+  workerThread->quit();
+  workerThread->wait();
 }
 
 void MainWindow::about()
@@ -106,8 +122,7 @@ void MainWindow::openFile(const QString& fileName)
 
   fileCloseAction->setEnabled(true);
 
-  Q_ASSERT(sampleDatabase == nullptr);
-  sampleDatabase = new SampleDatabase(fileName.toStdString());
+  emit changeFile(fileName);
 
   Q_ASSERT(sampleDatabaseWidget == nullptr);
   sampleDatabaseWidget = new SampleDatabaseWidget(this);
@@ -119,21 +134,9 @@ void MainWindow::closeFile()
   delete sampleDatabaseWidget;
   sampleDatabaseWidget = nullptr;
 
-  delete sampleDatabase;
-  sampleDatabase = nullptr;
+  emit changeFile("");
 
   fileCloseAction->setEnabled(false);
-}
-
-void MainWindow::evaluateDetector(const QString& name)
-{
-  if (sampleDatabase == nullptr)
-  {
-    return;
-  }
-
-  auto detector = WhistleDetectorFactoryBase::make(name.toStdString());
-  detector->evaluateOnDatabase(*sampleDatabase);
 }
 
 void MainWindow::updateFileMenu()

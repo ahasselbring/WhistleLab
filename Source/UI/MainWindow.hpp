@@ -10,13 +10,14 @@
 #include <QStringList>
 
 
-class SampleDatabase;
 class SampleDatabaseWidget;
 class QAction;
 class QCloseEvent;
 class QMenu;
 class QString;
 class QWidget;
+class QThread;
+class WhistleLabEngine;
 
 /**
  * @class MainWindow is the Qt main window class
@@ -30,6 +31,16 @@ public:
    * @param parent the parent object
    */
   MainWindow(QWidget* parent = 0);
+  /**
+   * @brief ~MainWindow destroys the worker thread
+   */
+  ~MainWindow();
+signals:
+  /**
+   * @brief changeFile signals that a file has been opened or closed
+   * @param fileName the name of the opened file or an empty string
+   */
+  void changeFile(const QString& fileName);
 private slots:
   /**
    * @brief about shows a message box with infos about this program
@@ -48,11 +59,6 @@ private slots:
    * @brief closeFile is called by a close action
    */
   void closeFile();
-  /**
-   * @brief evaluateDetector evaluates a detector on the currently opened database
-   * @param name the name of the detector
-   */
-  void evaluateDetector(const QString& name);
   /**
    * @brief updateFileMenu updates the recent files in the file menu
    */
@@ -91,8 +97,10 @@ private:
   QSignalMapper recentFileMapper;
   /// the list of recent files
   QStringList recentFiles;
-  /// the open sample database
-  SampleDatabase* sampleDatabase = nullptr;
   /// the widget that views the sample database
   SampleDatabaseWidget* sampleDatabaseWidget = nullptr;
+  /// the worker object
+  WhistleLabEngine* whistleLabEngine = nullptr;
+  /// the worker thread
+  QThread* workerThread = nullptr;
 };
