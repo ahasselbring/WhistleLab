@@ -24,22 +24,44 @@ SampleDatabase::SampleDatabase(const std::string& path)
   {
     throw std::runtime_error("Root element of YAML file must be a map!");
   }
-  const YAML::Node channels = root["audioChannels"];
-  if (!channels.IsDefined() || !channels.IsSequence())
+  const YAML::Node files = root["files"];
+  if (!files.IsDefined() || !files.IsSequence())
   {
-    throw std::runtime_error("There must be a sequence called audioChannels in the file!");
+    throw std::runtime_error("There must be a sequence called files in the file!");
   }
-  for (const auto channel : channels)
+  for (const auto file : files)
   {
-    if (!channel["path"].IsDefined() || !channel["channel"].IsDefined() || !channel["start"].IsDefined() || !channel["end"].IsDefined())
+    if (!file.IsDefined() || !file.IsMap()
+      || !file["path"].IsDefined() || !file["path"].IsScalar()
+      || !file["channels"].IsDefined() || !file["channels"].IsSequence())
     {
-      throw std::runtime_error("An element of the audioChannels sequence is not correct!");
+      throw std::runtime_error("An element of the files sequence is not correct!");
     }
-    const std::string filePath = channel["path"].as<std::string>();
-    const unsigned int channelNumber = channel["channel"].as<unsigned int>();
-    const unsigned int startSample = channel["start"].as<unsigned int>();
-    const unsigned int endSample = channel["end"].as<unsigned int>();
-    getAudioChannel(filePath, channelNumber).whistleLabels.emplace_back(startSample, endSample);
+    const std::string filePath = file["path"].as<std::string>();
+    const YAML::Node channels = file["channels"];
+    unsigned int channelNumber = 0;
+    for (const auto channel : channels)
+    {
+      if (!channel.IsDefined() || !channel.IsMap()
+        || !channel["whistles"].IsDefined() || !channel["whistles"].IsSequence())
+      {
+        throw std::runtime_error("An element of the channels sequence of a file is not correct!");
+      }
+      const YAML::Node whistles = channel["whistles"];
+      for (const auto whistle : whistles)
+      {
+        if (!whistle.IsDefined() || !whistle.IsMap()
+          || !whistle["start"].IsDefined() || !whistle["start"].IsScalar()
+          || !whistle["end"].IsDefined() || !whistle["end"].IsScalar())
+        {
+          throw std::runtime_error("An element of the whistles sequence of a channel is not correct!");
+        }
+        const unsigned int startSample = whistle["start"].as<unsigned int>();
+        const unsigned int endSample = whistle["end"].as<unsigned int>();
+        getAudioChannel(filePath, channelNumber).whistleLabels.emplace_back(startSample, endSample);
+      }
+      channelNumber++;
+    }
   }
 
   audioFiles.clear();
