@@ -37,10 +37,10 @@ public:
   ~MainWindow();
 signals:
   /**
-   * @brief changeFile signals that a file has been opened or closed
+   * @brief fileChanged signals that a file has been opened or closed
    * @param fileName the name of the opened file or an empty string
    */
-  void changeFile(const QString& fileName);
+  void fileChanged(const QString& fileName);
 private slots:
   /**
    * @brief about shows a message box with infos about this program

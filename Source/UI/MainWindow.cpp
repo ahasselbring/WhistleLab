@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
   helpMenu->addAction(aboutQtAction);
 
-  connect(this, &MainWindow::changeFile, whistleLabEngine, &WhistleLabEngine::changeFile);
+  connect(this, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeFile);
 
   setWindowTitle(tr("WhistleLab"));
   setUnifiedTitleAndToolBarOnMac(true);
@@ -122,7 +122,7 @@ void MainWindow::openFile(const QString& fileName)
 
   fileCloseAction->setEnabled(true);
 
-  emit changeFile(fileName);
+  emit fileChanged(fileName);
 
   Q_ASSERT(sampleDatabaseWidget == nullptr);
   sampleDatabaseWidget = new SampleDatabaseWidget(this);
@@ -134,7 +134,7 @@ void MainWindow::closeFile()
   delete sampleDatabaseWidget;
   sampleDatabaseWidget = nullptr;
 
-  emit changeFile("");
+  emit fileChanged("");
 
   fileCloseAction->setEnabled(false);
 }
