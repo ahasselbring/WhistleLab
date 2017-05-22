@@ -67,6 +67,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
   helpMenu->addAction(aboutQtAction);
 
+  sampleDatabaseWidget = new SampleDatabaseWidget(this);
+  addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
+
   connect(this, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeFile);
 
   setWindowTitle(tr("WhistleLab"));
@@ -120,23 +123,16 @@ void MainWindow::openFile(const QString& fileName)
   }
   settings.setValue("RecentFiles", recentFiles);
 
-  fileCloseAction->setEnabled(true);
-
   emit fileChanged(fileName);
 
-  Q_ASSERT(sampleDatabaseWidget == nullptr);
-  sampleDatabaseWidget = new SampleDatabaseWidget(this);
-  addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
+  fileCloseAction->setEnabled(true);
 }
 
 void MainWindow::closeFile()
 {
-  delete sampleDatabaseWidget;
-  sampleDatabaseWidget = nullptr;
+  fileCloseAction->setEnabled(false);
 
   emit fileChanged("");
-
-  fileCloseAction->setEnabled(false);
 }
 
 void MainWindow::updateFileMenu()
