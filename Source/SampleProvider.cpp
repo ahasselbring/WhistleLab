@@ -46,7 +46,7 @@ AudioSample SampleProvider::getSampleByOffset(const unsigned int offset, const u
   return as;
 }
 
-float SampleProvider::getLabel(const AudioChannel& audioChannel, const unsigned int start, const unsigned int end) const
+float SampleProvider::getLabel(const AudioChannel& audioChannel, const int start, const int end) const
 {
   const unsigned int totalLength = end - start;
   unsigned int whistleSamples = 0;

@@ -46,7 +46,7 @@ private:
    * @param end the first sample not belonging to the range anymore
    * @return the label (between 0 and 1)
    */
-  float getLabel(const AudioChannel& audioChannel, const unsigned int start, const unsigned int end) const;
+  float getLabel(const AudioChannel& audioChannel, const int start, const int end) const;
   /// a reference to the sample database
   const SampleDatabase& sampleDatabase;
 };

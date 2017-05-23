@@ -10,27 +10,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include "Engine/WhistleLabel.hpp"
 
-/**
- * @struct WhistleLabel a range of samples where a whistle starts and ends
- */
-struct WhistleLabel final
-{
-  /**
-   * @brief WhistleLabel initializes members
-   * @param start the first sample belonging to the whistle
-   * @param end the first sample not belonging to the whistle anymore
-   */
-  WhistleLabel(const unsigned int start, const unsigned int end)
-    : start(start)
-    , end(end)
-  {
-  }
-  /// the first sample belonging to the whistle
-  unsigned int start;
-  /// the first sample not belonging to the whistle anymore
-  unsigned int end;
-};
 
 /**
  * @struct AudioChannel is a single channel of an audio file

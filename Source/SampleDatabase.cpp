@@ -87,8 +87,8 @@ SampleDatabase::SampleDatabase(const std::string& path)
         {
           throw std::runtime_error("An element of the whistles sequence of a channel is not correct!");
         }
-        const unsigned int startSample = whistle["start"].as<unsigned int>();
-        const unsigned int endSample = whistle["end"].as<unsigned int>();
+        const int startSample = whistle["start"].as<int>();
+        const int endSample = whistle["end"].as<int>();
         ac.whistleLabels.emplace_back(startSample, endSample);
       }
       channelNumber++;
