@@ -37,12 +37,8 @@ struct WhistleLabel final
  */
 struct AudioChannel final
 {
-  /// the name of the corresponding file
-  std::string name;
   /// the index of the corresponding channel
   unsigned int channel;
-  /// the sample rate of the channel
-  unsigned int sampleRate;
   /// the actual sequence of samples in the channel
   std::vector<float> samples;
   /// the set of labeled whistles in the channel
@@ -62,6 +58,8 @@ struct AudioFile final
   unsigned int sampleRate;
   /// the actual sequence of samples in the file
   std::vector<float> samples;
+  /// the channels of the file
+  std::vector<AudioChannel> channels;
 };
 
 /**
@@ -76,28 +74,13 @@ public:
    */
   SampleDatabase(const std::string& path);
   /**
-   * @brief getAudioChannels returns the list of audio channels
-   * @return the list of audio channels
+   * @brief getAudioFiles returns the list of audio files
+   * @return the list of audio files
    */
-  const std::list<AudioChannel>& getAudioChannels() const;
+  const std::list<AudioFile>& getAudioFiles() const;
 private:
-  /**
-   * @brief getAudioChannel looks for an audio channel and loads it if it is not already loaded
-   * @param name the name of the file
-   * @param channel the index of the channel
-   * @return a reference to the channel inside the database
-   */
-  AudioChannel& getAudioChannel(const std::string& name, const unsigned int channel);
-  /**
-   * @brief getAudioFile looks for an audio file and loads it if it is not already loaded
-   * @param name the name of the file
-   * @return a reference to the audio file
-   */
-  AudioFile& getAudioFile(const std::string& name);
   /// the path in which the whistle database is located
   const boost::filesystem::path dirpath;
-  /// a list of audio channels in the database
-  std::list<AudioChannel> audioChannels;
   /// a list of audio files in the database (only valid during constructor)
   std::list<AudioFile> audioFiles;
   /// the total number of audio samples that is available in the database

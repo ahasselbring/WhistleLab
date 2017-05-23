@@ -39,6 +39,29 @@ SampleDatabase::SampleDatabase(const std::string& path)
     }
     const std::string filePath = file["path"].as<std::string>();
     const YAML::Node channels = file["channels"];
+    SF_INFO sfinfo;
+    std::memset(&sfinfo, 0, sizeof(sfinfo));
+    SNDFILE* f = sf_open((dirpath / filePath).c_str(), SFM_READ, &sfinfo);
+    if (f == nullptr)
+    {
+      throw std::runtime_error("Could not open audio file!");
+    }
+    audioFiles.emplace_back();
+    AudioFile& af = audioFiles.back();
+    af.name = filePath;
+    af.numberOfChannels = sfinfo.channels;
+    if (af.numberOfChannels != channels.size())
+    {
+      throw std::runtime_error("Audio file has different number of channels than indicated in sample database!");
+    }
+    af.sampleRate = sfinfo.samplerate;
+    af.samples.resize(sfinfo.frames * sfinfo.channels);
+    if (sf_readf_float(f, af.samples.data(), sfinfo.frames) != sfinfo.frames)
+    {
+      sf_close(f);
+      throw std::runtime_error("Could not read samples from file!");
+    }
+    sf_close(f);
     unsigned int channelNumber = 0;
     for (const auto channel : channels)
     {
@@ -46,6 +69,14 @@ SampleDatabase::SampleDatabase(const std::string& path)
         || !channel["whistles"].IsDefined() || !channel["whistles"].IsSequence())
       {
         throw std::runtime_error("An element of the channels sequence of a file is not correct!");
+      }
+      af.channels.emplace_back();
+      AudioChannel& ac = af.channels.back();
+      ac.channel = channelNumber;
+      ac.samples.resize(af.samples.size() / af.numberOfChannels);
+      for (unsigned int i = 0; i < af.samples.size() / af.numberOfChannels; i++)
+      {
+        ac.samples[i] = af.samples[i * af.numberOfChannels + channelNumber];
       }
       const YAML::Node whistles = channel["whistles"];
       for (const auto whistle : whistles)
@@ -58,83 +89,26 @@ SampleDatabase::SampleDatabase(const std::string& path)
         }
         const unsigned int startSample = whistle["start"].as<unsigned int>();
         const unsigned int endSample = whistle["end"].as<unsigned int>();
-        getAudioChannel(filePath, channelNumber).whistleLabels.emplace_back(startSample, endSample);
+        ac.whistleLabels.emplace_back(startSample, endSample);
       }
       channelNumber++;
     }
   }
 
-  audioFiles.clear();
-
-  for (auto& audioChannel : audioChannels)
-  {
-    totalAudioLength += audioChannel.samples.size();
-    for (auto& whistleLabel : audioChannel.whistleLabels)
-    {
-      totalWhistleLength += whistleLabel.end - whistleLabel.start;
-    }
-  }
-}
-
-const std::list<AudioChannel>& SampleDatabase::getAudioChannels() const
-{
-  return audioChannels;
-}
-
-AudioChannel& SampleDatabase::getAudioChannel(const std::string& name, const unsigned int channel)
-{
-  for (auto& audioChannel : audioChannels)
-  {
-    if (audioChannel.name == name && audioChannel.channel == channel)
-    {
-      return audioChannel;
-    }
-  }
-  AudioFile& af = getAudioFile(name);
-  if (channel >= af.numberOfChannels)
-  {
-    throw std::runtime_error("Channel is out of bounds!");
-  }
-  audioChannels.emplace_back();
-  AudioChannel& ac = audioChannels.back();
-  ac.name = name;
-  ac.channel = channel;
-  ac.sampleRate = af.sampleRate;
-  ac.samples.resize(af.samples.size() / af.numberOfChannels);
-  for (unsigned int i = 0; i < af.samples.size() / af.numberOfChannels; i++)
-  {
-    ac.samples[i] = af.samples[i * af.numberOfChannels + channel];
-  }
-  return ac;
-}
-
-AudioFile& SampleDatabase::getAudioFile(const std::string& name)
-{
   for (auto& audioFile : audioFiles)
   {
-    if (audioFile.name == name)
+    for (auto& audioChannel : audioFile.channels)
     {
-      return audioFile;
+      totalAudioLength += audioChannel.samples.size();
+      for (auto& whistleLabel : audioChannel.whistleLabels)
+      {
+        totalWhistleLength += whistleLabel.end - whistleLabel.start;
+      }
     }
   }
-  SF_INFO sfinfo;
-  std::memset(&sfinfo, 0, sizeof(sfinfo));
-  SNDFILE* f = sf_open((dirpath / name).c_str(), SFM_READ, &sfinfo);
-  if (f == nullptr)
-  {
-    throw std::runtime_error("Could not open audio file!");
-  }
-  audioFiles.emplace_back();
-  AudioFile& af = audioFiles.back();
-  af.name = name;
-  af.numberOfChannels = sfinfo.channels;
-  af.sampleRate = sfinfo.samplerate;
-  af.samples.resize(sfinfo.frames * sfinfo.channels);
-  if (sf_readf_float(f, af.samples.data(), sfinfo.frames) != sfinfo.frames)
-  {
-    sf_close(f);
-    throw std::runtime_error("Could not read samples from file!");
-  }
-  sf_close(f);
-  return af;
+}
+
+const std::list<AudioFile>& SampleDatabase::getAudioFiles() const
+{
+  return audioFiles;
 }
