@@ -14,12 +14,6 @@ class WhistleLabel final
 {
 public:
   /**
-   * @brief WhistleLabel initializes members
-   * @param start the first sample belonging to the whistle
-   * @param end the first sample not belonging to the whistle anymore
-   */
-  WhistleLabel(const int start, const int end);
-  /**
    * @brief read deserializes the object
    * @param object the JSON object from which the object is deserialized
    */
@@ -28,9 +22,9 @@ public:
    * @brief write serializes the object
    * @param object the JSON object to which the serialization is written
    */
-  void write(QJsonObject& object);
+  void write(QJsonObject& object) const;
   /// the first sample belonging to the whistle
-  int start;
+  int start = 0;
   /// the first sample not belonging to the whistle anymore
-  int end;
+  int end = 0;
 };

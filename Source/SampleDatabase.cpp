@@ -70,9 +70,8 @@ SampleDatabase::SampleDatabase(const std::string& path)
       {
         throw std::runtime_error("An element of the channels sequence of a file is not correct!");
       }
-      af.channels.emplace_back();
+      af.channels.emplace_back(channelNumber);
       AudioChannel& ac = af.channels.back();
-      ac.channel = channelNumber;
       ac.samples.resize(af.samples.size() / af.numberOfChannels);
       for (unsigned int i = 0; i < af.samples.size() / af.numberOfChannels; i++)
       {
@@ -89,7 +88,9 @@ SampleDatabase::SampleDatabase(const std::string& path)
         }
         const int startSample = whistle["start"].as<int>();
         const int endSample = whistle["end"].as<int>();
-        ac.whistleLabels.emplace_back(startSample, endSample);
+        ac.whistleLabels.emplace_back();
+        ac.whistleLabels.back().start = startSample;
+        ac.whistleLabels.back().end = endSample;
       }
       channelNumber++;
     }

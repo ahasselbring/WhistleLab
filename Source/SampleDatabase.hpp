@@ -10,21 +10,8 @@
 
 #include <boost/filesystem.hpp>
 
-#include "Engine/WhistleLabel.hpp"
+#include "Engine/AudioChannel.hpp"
 
-
-/**
- * @struct AudioChannel is a single channel of an audio file
- */
-struct AudioChannel final
-{
-  /// the index of the corresponding channel
-  unsigned int channel;
-  /// the actual sequence of samples in the channel
-  std::vector<float> samples;
-  /// the set of labeled whistles in the channel
-  std::vector<WhistleLabel> whistleLabels;
-};
 
 /**
  * @struct AudioFile represents a complete audio file

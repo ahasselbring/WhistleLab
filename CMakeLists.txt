@@ -20,6 +20,8 @@ set(SOURCES
   Source/Detector/WhistleDetectorFactory.hpp
   Source/Detector/WhistleDetectorFactoryBase.cpp
   Source/Detector/WhistleDetectorFactoryBase.hpp
+  Source/Engine/AudioChannel.cpp
+  Source/Engine/AudioChannel.hpp
   Source/Engine/WhistleLabel.cpp
   Source/Engine/WhistleLabel.hpp
   Source/Engine/WhistleLabEngine.cpp
