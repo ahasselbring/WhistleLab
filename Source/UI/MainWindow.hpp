@@ -38,9 +38,10 @@ public:
 signals:
   /**
    * @brief fileChanged signals that a file has been opened or closed
-   * @param fileName the name of the opened file or an empty string
+   * @param readFileName the name of the new database file or an empty string
+   * @param writeFileName the name where the old database is written or an empty string
    */
-  void fileChanged(const QString& fileName);
+  void fileChanged(const QString& readFileName, const QString& writeFileName);
 private slots:
   /**
    * @brief about shows a message box with infos about this program

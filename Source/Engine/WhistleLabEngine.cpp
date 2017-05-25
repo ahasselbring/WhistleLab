@@ -27,20 +27,17 @@ void WhistleLabEngine::evaluateDetector(const QString& name)
   detector->evaluateOnDatabase(*sampleDatabase);
 }
 
-void WhistleLabEngine::changeFile(const QString& fileName)
+void WhistleLabEngine::changeFile(const QString& readFileName, const QString& writeFileName)
 {
-  if (fileName.isEmpty())
+  if (sampleDatabase != nullptr && !writeFileName.isEmpty())
   {
-    delete sampleDatabase;
-    sampleDatabase = nullptr;
+    sampleDatabase->writeToFile(writeFileName);
   }
-  else
+  delete sampleDatabase;
+  sampleDatabase = nullptr;
+  if (!readFileName.isEmpty())
   {
-    if (sampleDatabase != nullptr)
-    {
-      delete sampleDatabase;
-    }
     sampleDatabase = new SampleDatabase;
-    sampleDatabase->readFromFile(fileName);
+    sampleDatabase->readFromFile(readFileName);
   }
 }

@@ -123,7 +123,7 @@ void MainWindow::openFile(const QString& fileName)
   }
   settings.setValue("RecentFiles", recentFiles);
 
-  emit fileChanged(fileName);
+  emit fileChanged(fileName, "");
 
   fileCloseAction->setEnabled(true);
 }
@@ -132,7 +132,7 @@ void MainWindow::closeFile()
 {
   fileCloseAction->setEnabled(false);
 
-  emit fileChanged("");
+  emit fileChanged("", "");
 }
 
 void MainWindow::updateFileMenu()

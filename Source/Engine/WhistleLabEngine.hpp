@@ -30,9 +30,10 @@ public slots:
   void evaluateDetector(const QString& name);
   /**
    * @brief changeFile opens or closes the sample database
-   * @param fileName the name of the new database file or an empty string
+   * @param readFileName the name of the new database file or an empty string
+   * @param writeFileName the name where the old database is written or an empty string
    */
-  void changeFile(const QString& fileName);
+  void changeFile(const QString& readFileName, const QString& writeFileName);
 private:
   /// the open sample database
   SampleDatabase* sampleDatabase = nullptr;
