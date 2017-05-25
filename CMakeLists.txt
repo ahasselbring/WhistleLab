@@ -8,8 +8,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(SOURCES
   Source/Main.cpp
-  Source/SampleDatabase.cpp
-  Source/SampleDatabase.hpp
+  Source/Engine/SampleDatabase.cpp
+  Source/Engine/SampleDatabase.hpp
   Source/SampleProvider.cpp
   Source/SampleProvider.hpp
   Source/Detector/HULKsDetector.cpp
@@ -22,6 +22,8 @@ set(SOURCES
   Source/Detector/WhistleDetectorFactoryBase.hpp
   Source/Engine/AudioChannel.cpp
   Source/Engine/AudioChannel.hpp
+  Source/Engine/AudioFile.cpp
+  Source/Engine/AudioFile.hpp
   Source/Engine/WhistleLabel.cpp
   Source/Engine/WhistleLabel.hpp
   Source/Engine/WhistleLabEngine.cpp
@@ -32,7 +34,6 @@ set(SOURCES
   Source/UI/SampleDatabaseWidget.hpp
 )
 
-find_package(Boost COMPONENTS filesystem REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
 add_executable(whistle ${SOURCES})
@@ -42,6 +43,4 @@ target_include_directories(whistle PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 target_link_libraries(whistle -lsndfile)
 target_link_libraries(whistle -lfftw3)
-target_link_libraries(whistle -lyaml-cpp)
-target_link_libraries(whistle Boost::filesystem)
 target_link_libraries(whistle Qt5::Widgets)

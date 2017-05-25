@@ -5,19 +5,21 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include "SampleDatabase.hpp"
+#include "AudioFile.hpp"
 
 #include "AudioChannel.hpp"
 
 
-AudioChannel::AudioChannel(unsigned int channel)
-  : channel(channel)
+void AudioChannel::read(const QJsonObject& object, const AudioFile& audioFile, const unsigned int channelNumber)
 {
-}
-
-void AudioChannel::read(const QJsonObject& object, const AudioFile& audioFile)
-{
-  QJsonArray whistleLabelArray = object["whistles"].toArray();
+  channel = channelNumber;
+  // get the samples from the audio file that this channel belongs to
+  samples.resize(audioFile.samples.size() / audioFile.numberOfChannels);
+  for (int i = 0; i < samples.size(); i++)
+  {
+    samples[i] = audioFile.samples[i * audioFile.numberOfChannels + channel];
+  }
+  QJsonArray whistleLabelArray = object["whistleLabels"].toArray();
   whistleLabels.resize(whistleLabelArray.size());
   for (int whistleLabelIndex = 0; whistleLabelIndex < whistleLabelArray.size(); whistleLabelIndex++)
   {
@@ -25,12 +27,6 @@ void AudioChannel::read(const QJsonObject& object, const AudioFile& audioFile)
     WhistleLabel whistleLabel;
     whistleLabel.read(whistleLabelObject);
     whistleLabels[whistleLabelIndex] = whistleLabel;
-  }
-  // get the samples from the audio file that this channel belongs to
-  samples.resize(audioFile.samples.size() / audioFile.numberOfChannels);
-  for (unsigned int i = 0; i < samples.size(); i++)
-  {
-    samples[i] = audioFile.samples[i * audioFile.numberOfChannels + channel];
   }
 }
 
@@ -43,5 +39,5 @@ void AudioChannel::write(QJsonObject& object) const
     whistleLabel.write(whistleLabelObject);
     whistleLabelArray.append(whistleLabelObject);
   }
-  object["whistles"] = whistleLabelArray;
+  object["whistleLabels"] = whistleLabelArray;
 }

@@ -40,6 +40,7 @@ void WhistleLabEngine::changeFile(const QString& fileName)
     {
       delete sampleDatabase;
     }
-    sampleDatabase = new SampleDatabase(fileName.toStdString());
+    sampleDatabase = new SampleDatabase;
+    sampleDatabase->readFromFile(fileName);
   }
 }

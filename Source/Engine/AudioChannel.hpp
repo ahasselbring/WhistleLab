@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <vector>
+#include <QVector>
 
 #include "WhistleLabel.hpp"
 
@@ -18,25 +18,21 @@ class AudioChannel final
 {
 public:
   /**
-   * @brief AudioChannel initializes members
-   * @param channel the channel number
-   */
-  AudioChannel(unsigned int channel);
-  /**
    * @brief read deserializes the object
    * @param object the JSON object from which the object is deserialized
    * @param audioFile the audio file to which the channel belongs
+   * @param channelNumber the number of the channel inside the file
    */
-  void read(const QJsonObject& object, const AudioFile& audioFile);
+  void read(const QJsonObject& object, const AudioFile& audioFile, const unsigned int channelNumber);
   /**
    * @brief write serializes the object
    * @param object the JSON object to which the serialization is written
    */
   void write(QJsonObject& object) const;
   /// the index of the corresponding channel
-  const unsigned int channel;
+  unsigned int channel = 0;
   /// the actual sequence of samples in the channel
-  std::vector<float> samples;
+  QVector<float> samples;
   /// the set of labeled whistles in the channel
-  std::vector<WhistleLabel> whistleLabels;
+  QVector<WhistleLabel> whistleLabels;
 };

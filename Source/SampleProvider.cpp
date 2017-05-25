@@ -16,11 +16,11 @@ AudioSample SampleProvider::getSampleByOffset(const unsigned int offset, const u
 {
   AudioSample as;
   unsigned int remainingOffset = offset;
-  for (auto& audioFile : sampleDatabase.getAudioFiles())
+  for (auto& audioFile : sampleDatabase.audioFiles)
   {
     for (auto& audioChannel : audioFile.channels)
     {
-      if (remainingOffset + length <= audioChannel.samples.size())
+      if (remainingOffset + length <= static_cast<unsigned int>(audioChannel.samples.size()))
       {
         as.label = getLabel(audioChannel, remainingOffset, remainingOffset + length);
         as.samples.resize(length);
@@ -31,7 +31,7 @@ AudioSample SampleProvider::getSampleByOffset(const unsigned int offset, const u
       }
       else
       {
-        if (remainingOffset < audioChannel.samples.size())
+        if (remainingOffset < static_cast<unsigned int>(audioChannel.samples.size()))
         {
           remainingOffset = 0;
         }

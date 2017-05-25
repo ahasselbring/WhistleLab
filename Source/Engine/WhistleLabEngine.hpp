@@ -7,6 +7,7 @@
 #include <QObject>
 
 
+class QString;
 class SampleDatabase;
 
 /**
