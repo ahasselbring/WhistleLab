@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget* parent)
     sampleDatabaseWidget, &SampleDatabaseWidget::updateSampleDatabase);
   addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
 
-  connect(this, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeFile);
+  connect(this, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeDatabase);
 
   setWindowTitle(tr("WhistleLab"));
   setUnifiedTitleAndToolBarOnMac(true);

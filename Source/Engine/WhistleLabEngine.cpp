@@ -26,7 +26,7 @@ void WhistleLabEngine::evaluateDetector(const QString& name)
   detector->evaluateOnDatabase(sampleDatabase);
 }
 
-void WhistleLabEngine::changeFile(const QString& readFileName, const QString& writeFileName)
+void WhistleLabEngine::changeDatabase(const QString& readFileName, const QString& writeFileName)
 {
   if (sampleDatabase.exists && !writeFileName.isEmpty())
   {
