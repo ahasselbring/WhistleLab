@@ -35,4 +35,6 @@ public:
   QVector<float> samples;
   /// the set of labeled whistles in the channel
   QVector<WhistleLabel> whistleLabels;
+  /// whether the labeling is complete (otherwise it is dangerous to sample negatives from this channel)
+  bool completelyLabeled = false;
 };

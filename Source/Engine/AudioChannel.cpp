@@ -28,6 +28,7 @@ void AudioChannel::read(const QJsonObject& object, const AudioFile& audioFile, c
     whistleLabel.read(whistleLabelObject);
     whistleLabels[whistleLabelIndex] = whistleLabel;
   }
+  completelyLabeled = object["completelyLabeled"].toBool();
 }
 
 void AudioChannel::write(QJsonObject& object) const
@@ -40,4 +41,5 @@ void AudioChannel::write(QJsonObject& object) const
     whistleLabelArray.append(whistleLabelObject);
   }
   object["whistleLabels"] = whistleLabelArray;
+  object["completelyLabeled"] = completelyLabeled;
 }
