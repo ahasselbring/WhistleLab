@@ -28,6 +28,7 @@ void SampleDatabase::read(const QJsonObject& object, const QString& fileName)
     audioFile.read(whistleLabelObject, fileInfo.absoluteDir());
     audioFiles.append(audioFile);
   }
+  exists = true;
 }
 
 void SampleDatabase::write(QJsonObject& object) const
@@ -65,4 +66,10 @@ void SampleDatabase::writeToFile(const QString& fileName)
   write(dbObject);
   QJsonDocument doc(dbObject);
   outFile.write(doc.toJson());
+}
+
+void SampleDatabase::clear()
+{
+  exists = false;
+  audioFiles.clear();
 }

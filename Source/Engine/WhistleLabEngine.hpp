@@ -6,9 +6,10 @@
 
 #include <QObject>
 
+#include "Engine/SampleDatabase.hpp"
+
 
 class QString;
-class SampleDatabase;
 
 /**
  * @class WhistleLabEngine is the main application class
@@ -22,6 +23,12 @@ public:
    * @param parent the parent object
    */
   WhistleLabEngine(QObject* parent = 0);
+signals:
+  /**
+   * @brief sampleDatabaseChanged signals that the sample database has changed
+   * @param sampleDatabase a copy of the new sample database
+   */
+  void sampleDatabaseChanged(const SampleDatabase sampleDatabase);
 public slots:
   /**
    * @brief evaluateDetector evaluates a detector on the currently opened database
@@ -36,5 +43,5 @@ public slots:
   void changeFile(const QString& readFileName, const QString& writeFileName);
 private:
   /// the open sample database
-  SampleDatabase* sampleDatabase = nullptr;
+  SampleDatabase sampleDatabase;
 };

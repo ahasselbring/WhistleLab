@@ -68,6 +68,8 @@ MainWindow::MainWindow(QWidget* parent)
   helpMenu->addAction(aboutQtAction);
 
   sampleDatabaseWidget = new SampleDatabaseWidget(this);
+  connect(whistleLabEngine, &WhistleLabEngine::sampleDatabaseChanged,
+    sampleDatabaseWidget, &SampleDatabaseWidget::updateSampleDatabase);
   addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
 
   connect(this, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeFile);

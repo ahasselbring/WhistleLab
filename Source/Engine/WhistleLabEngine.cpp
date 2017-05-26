@@ -6,7 +6,6 @@
 
 #include "Detector/WhistleDetectorBase.hpp"
 #include "Detector/WhistleDetectorFactoryBase.hpp"
-#include "SampleDatabase.hpp"
 
 #include "WhistleLabEngine.hpp"
 
@@ -18,26 +17,25 @@ WhistleLabEngine::WhistleLabEngine(QObject* parent)
 
 void WhistleLabEngine::evaluateDetector(const QString& name)
 {
-  if (sampleDatabase == nullptr)
+  if (!sampleDatabase.exists)
   {
     return;
   }
 
   auto detector = WhistleDetectorFactoryBase::make(name.toStdString());
-  detector->evaluateOnDatabase(*sampleDatabase);
+  detector->evaluateOnDatabase(sampleDatabase);
 }
 
 void WhistleLabEngine::changeFile(const QString& readFileName, const QString& writeFileName)
 {
-  if (sampleDatabase != nullptr && !writeFileName.isEmpty())
+  if (sampleDatabase.exists && !writeFileName.isEmpty())
   {
-    sampleDatabase->writeToFile(writeFileName);
+    sampleDatabase.writeToFile(writeFileName);
   }
-  delete sampleDatabase;
-  sampleDatabase = nullptr;
+  sampleDatabase.clear();
   if (!readFileName.isEmpty())
   {
-    sampleDatabase = new SampleDatabase;
-    sampleDatabase->readFromFile(readFileName);
+    sampleDatabase.readFromFile(readFileName);
   }
+  emit sampleDatabaseChanged(sampleDatabase);
 }

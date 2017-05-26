@@ -5,6 +5,7 @@
 #pragma once
 
 #include <QList>
+#include <QMetaType>
 #include <QString>
 
 #include "Engine/AudioFile.hpp"
@@ -39,8 +40,16 @@ public:
    * @param fileName the name of the file
    */
   void writeToFile(const QString& fileName);
+  /**
+   * @brief clear clears the database and marks it as not existing
+   */
+  void clear();
+  /// whether the sample database is existing
+  bool exists = false;
   /// the name of the sample database
   QString name;
   /// a list of audio files in the database
   QList<AudioFile> audioFiles;
 };
+
+Q_DECLARE_METATYPE(SampleDatabase)

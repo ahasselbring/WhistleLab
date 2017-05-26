@@ -4,12 +4,14 @@
 
 #include <QApplication>
 
+#include "Engine/SampleDatabase.hpp"
 #include "UI/MainWindow.hpp"
 
 
 int main(int argc, char* argv[])
 {
   QApplication app(argc, argv);
+  qRegisterMetaType<SampleDatabase>();
   app.setApplicationName("WhistleLab");
 
   MainWindow window;
