@@ -62,10 +62,8 @@ MainWindow::MainWindow(QWidget* parent)
   helpMenu = menuBar()->addMenu(tr("&Help"));
   QAction* aboutAction = helpMenu->addAction(tr("&About"));
   connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
-  helpMenu->addAction(aboutAction);
   QAction* aboutQtAction = helpMenu->addAction(tr("About &Qt"));
   connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
-  helpMenu->addAction(aboutQtAction);
 
   sampleDatabaseWidget = new SampleDatabaseWidget(this);
   connect(whistleLabEngine, &WhistleLabEngine::sampleDatabaseChanged,
