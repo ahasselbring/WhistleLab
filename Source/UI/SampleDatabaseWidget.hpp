@@ -9,6 +9,7 @@
 #include "Engine/SampleDatabase.hpp"
 
 
+class QPoint;
 class QTreeWidget;
 class QWidget;
 
@@ -30,6 +31,12 @@ public slots:
    * @param sampleDatabase a copy of the new sample database
    */
   void updateSampleDatabase(const SampleDatabase sampleDatabase);
+private slots:
+  /**
+   * @brief prepareMenu prepares a context menu depending on the type of the clicked item
+   * @param pos the position of the click
+   */
+  void prepareMenu(const QPoint& pos);
 private:
   /// the tree that displays the sample database
   QTreeWidget* treeWidget = nullptr;

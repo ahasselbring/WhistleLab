@@ -3,6 +3,7 @@
  */
 
 #include <QHeaderView>
+#include <QMenu>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
@@ -16,6 +17,8 @@ SampleDatabaseWidget::SampleDatabaseWidget(QWidget* parent)
   setWindowTitle(tr("Sample Database"));
 
   treeWidget = new QTreeWidget(this);
+  connect(treeWidget, &QTreeWidget::customContextMenuRequested, this, &SampleDatabaseWidget::prepareMenu);
+  treeWidget->setContextMenuPolicy(Qt::NoContextMenu);
   treeWidget->header()->hide();
 
   setWidget(treeWidget);
@@ -26,9 +29,11 @@ void SampleDatabaseWidget::updateSampleDatabase(const SampleDatabase sampleDatab
   treeWidget->clear();
   if (!sampleDatabase.exists)
   {
+    treeWidget->setContextMenuPolicy(Qt::NoContextMenu);
     treeWidget->header()->hide();
     return;
   }
+  treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
   treeWidget->setHeaderLabel(sampleDatabase.name);
   treeWidget->header()->show();
   QTreeWidgetItem* root = treeWidget->invisibleRootItem();
@@ -48,4 +53,37 @@ void SampleDatabaseWidget::updateSampleDatabase(const SampleDatabase sampleDatab
       }
     }
   }
+}
+
+void SampleDatabaseWidget::prepareMenu(const QPoint& pos)
+{
+  QTreeWidgetItem* item = treeWidget->itemAt(pos);
+  QMenu menu;
+  if (item != nullptr)
+  {
+    if (item->parent() == nullptr)
+    {
+      QAction* removeFileAction = new QAction(tr("&Remove File"), this);
+      menu.addAction(removeFileAction);
+    }
+    else if (item->parent()->parent() == nullptr)
+    {
+      QAction* openInLabelWidgetAction = new QAction(tr("&Open in Label Widget"), this);
+      menu.addAction(openInLabelWidgetAction);
+    }
+    else
+    {
+      QAction* removeLabelAction = new QAction(tr("Remove &Label"), this);
+      menu.addAction(removeLabelAction);
+
+      QAction* setIntervalAction = new QAction(tr("&Set Interval"), this);
+      menu.addAction(setIntervalAction);
+    }
+  }
+  else
+  {
+    QAction* addFileAction = new QAction(tr("&Add File"), this);
+    menu.addAction(addFileAction);
+  }
+  menu.exec(treeWidget->mapToGlobal(pos));
 }
