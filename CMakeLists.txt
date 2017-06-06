@@ -35,6 +35,7 @@ set(SOURCES
 )
 
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Multimedia REQUIRED)
 
 add_executable(whistle ${SOURCES})
 target_compile_options(whistle PRIVATE -std=c++14 -Wall -Wextra -pedantic
@@ -43,4 +44,4 @@ target_include_directories(whistle PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 target_link_libraries(whistle -lsndfile)
 target_link_libraries(whistle -lfftw3)
-target_link_libraries(whistle Qt5::Widgets)
+target_link_libraries(whistle Qt5::Widgets Qt5::Multimedia)
