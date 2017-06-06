@@ -28,6 +28,8 @@ set(SOURCES
   Source/Engine/WhistleLabel.hpp
   Source/Engine/WhistleLabEngine.cpp
   Source/Engine/WhistleLabEngine.hpp
+  Source/UI/LabelWidget.cpp
+  Source/UI/LabelWidget.hpp
   Source/UI/MainWindow.cpp
   Source/UI/MainWindow.hpp
   Source/UI/SampleDatabaseWidget.cpp
