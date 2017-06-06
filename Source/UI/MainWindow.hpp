@@ -10,6 +10,7 @@
 #include <QStringList>
 
 
+class LabelWidget;
 class SampleDatabaseWidget;
 class QAction;
 class QCloseEvent;
@@ -98,6 +99,8 @@ private:
   QSignalMapper recentFileMapper;
   /// the list of recent files
   QStringList recentFiles;
+  /// the widget that allows labeling of audio data
+  LabelWidget* labelWidget = nullptr;
   /// the widget that views the sample database
   SampleDatabaseWidget* sampleDatabaseWidget = nullptr;
   /// the worker object

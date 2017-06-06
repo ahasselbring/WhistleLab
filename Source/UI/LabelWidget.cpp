@@ -8,4 +8,6 @@
 LabelWidget::LabelWidget(QWidget* parent)
   : QDockWidget(parent)
 {
+  setAllowedAreas(Qt::RightDockWidgetArea);
+  setWindowTitle(tr("Labeling"));
 }

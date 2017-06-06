@@ -15,8 +15,10 @@
 #include "Detector/WhistleDetectorFactoryBase.hpp"
 #include "Engine/WhistleLabEngine.hpp"
 
-#include "MainWindow.hpp"
+#include "LabelWidget.hpp"
 #include "SampleDatabaseWidget.hpp"
+
+#include "MainWindow.hpp"
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -69,6 +71,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(whistleLabEngine, &WhistleLabEngine::sampleDatabaseChanged,
     sampleDatabaseWidget, &SampleDatabaseWidget::updateSampleDatabase);
   addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
+
+  labelWidget = new LabelWidget(this);
+  addDockWidget(Qt::RightDockWidgetArea, labelWidget);
 
   connect(this, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeDatabase);
 
@@ -164,6 +169,11 @@ void MainWindow::updateViewMenu()
   if (sampleDatabaseWidget != nullptr)
   {
     viewMenu->addAction(sampleDatabaseWidget->toggleViewAction());
+  }
+
+  if (labelWidget != nullptr)
+  {
+    viewMenu->addAction(labelWidget->toggleViewAction());
   }
 }
 
