@@ -69,6 +69,12 @@ MainWindow::MainWindow(QWidget* parent)
   addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
 
   labelWidget = new LabelWidget(this);
+  connect(whistleLabEngine, &WhistleLabEngine::sampleDatabaseChanged,
+    labelWidget, &LabelWidget::updateSampleDatabase);
+  connect(sampleDatabaseWidget, &SampleDatabaseWidget::channelSelectedForLabeling,
+    labelWidget, &LabelWidget::selectChannel);
+  connect(labelWidget, &LabelWidget::channelSelectedForPlayback,
+    whistleLabEngine, &WhistleLabEngine::selectPlaybackAudioChannel);
   addDockWidget(Qt::RightDockWidgetArea, labelWidget);
 
   connect(this, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeDatabase);
