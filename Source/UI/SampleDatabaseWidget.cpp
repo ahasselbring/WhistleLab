@@ -69,6 +69,8 @@ void SampleDatabaseWidget::prepareMenu(const QPoint& pos)
     else if (item->parent()->parent() == nullptr)
     {
       QAction* openInLabelWidgetAction = new QAction(tr("&Open in Label Widget"), this);
+      connect(openInLabelWidgetAction, &QAction::triggered, this,
+        [this, item]{ emit channelSelectedForLabeling(item->parent()->data(0, 0).toString(), item->data(0, 0).toUInt()); });
       menu.addAction(openInLabelWidgetAction);
     }
     else

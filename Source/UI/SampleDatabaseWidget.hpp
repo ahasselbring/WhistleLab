@@ -10,6 +10,7 @@
 
 
 class QPoint;
+class QString;
 class QTreeWidget;
 class QWidget;
 
@@ -25,6 +26,13 @@ public:
    * @param parent the parent object
    */
   SampleDatabaseWidget(QWidget* parent = 0);
+signals:
+  /**
+   * @brief channelSelectedForLabeling is emitted when a channel is selected for labeling
+   * @param path the path of the audio file in the sample database
+   * @param channel the channel number of the channel in the file
+   */
+  void channelSelectedForLabeling(const QString& path, const unsigned int channel);
 public slots:
   /**
    * @brief updateSampleDatabase updates the sample database that is viewed
