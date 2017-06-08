@@ -6,7 +6,6 @@
 
 #include <QMainWindow>
 #include <QSettings>
-#include <QSignalMapper>
 #include <QStringList>
 
 
@@ -93,10 +92,6 @@ private:
   QMenu* helpMenu = nullptr;
   /// the settings of this application
   QSettings settings;
-  /// the mapper that maps evaluate actions to a single evaluate slot
-  QSignalMapper evaluateMapper;
-  /// the mapper that maps open recent file actions to a single open file slot
-  QSignalMapper recentFileMapper;
   /// the list of recent files
   QStringList recentFiles;
   /// the widget that allows labeling of audio data

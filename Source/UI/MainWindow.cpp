@@ -42,19 +42,15 @@ MainWindow::MainWindow(QWidget* parent)
 
   fileMenu = menuBar()->addMenu(tr("&File"));
   connect(fileMenu, &QMenu::aboutToShow, this, &MainWindow::updateFileMenu);
-  connect(&recentFileMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped),
-    this, &MainWindow::openFile);
   updateFileMenu();
 
   evaluateMenu = menuBar()->addMenu(tr("&Evaluate"));
-  connect(&evaluateMapper, static_cast<void (QSignalMapper::*)(const QString&)>(&QSignalMapper::mapped),
-    whistleLabEngine, &WhistleLabEngine::evaluateDetector);
   auto detectorNames = WhistleDetectorFactoryBase::getDetectorNames();
   for (auto& name : detectorNames)
   {
     QAction* action = evaluateMenu->addAction(QString::fromStdString(name));
-    evaluateMapper.setMapping(action, QString::fromStdString(name));
-    connect(action, &QAction::triggered, &evaluateMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
+    connect(action, &QAction::triggered, whistleLabEngine,
+      [this, name]{ whistleLabEngine->evaluateDetector(QString::fromStdString(name)); });
   }
 
   viewMenu = menuBar()->addMenu(tr("&View"));
@@ -153,8 +149,7 @@ void MainWindow::updateFileMenu()
     for (auto& file : recentFiles)
     {
       QAction* action = fileMenu->addAction("&" + QString(shortcut++) + " " + QFileInfo(file).fileName());
-      recentFileMapper.setMapping(action, file);
-      connect(action, &QAction::triggered, &recentFileMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
+      connect(action, &QAction::triggered, this, [this, file]{ openFile(file); });
     }
   }
 
