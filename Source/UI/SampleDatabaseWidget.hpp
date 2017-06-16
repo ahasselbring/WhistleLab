@@ -36,9 +36,9 @@ signals:
 public slots:
   /**
    * @brief updateSampleDatabase updates the sample database that is viewed
-   * @param sampleDatabase a copy of the new sample database
+   * @param sampleDatabase a reference to the new sample database
    */
-  void updateSampleDatabase(const SampleDatabase sampleDatabase);
+  void updateSampleDatabase(const SampleDatabase& sampleDatabase);
 private slots:
   /**
    * @brief prepareMenu prepares a context menu depending on the type of the clicked item

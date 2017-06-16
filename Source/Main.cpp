@@ -2,20 +2,15 @@
  * @file Main.cpp implements the main function
  */
 
-#include <QApplication>
-
 #include "Engine/SampleDatabase.hpp"
-#include "UI/MainWindow.hpp"
+
+#include "WhistleLabApplication.hpp"
 
 
 int main(int argc, char* argv[])
 {
-  QApplication app(argc, argv);
   qRegisterMetaType<SampleDatabase>();
-  app.setApplicationName("WhistleLab");
+  WhistleLabApplication app(argc, argv);
 
-  MainWindow window;
-  window.show();
-
-  return app.exec();
+  return static_cast<QApplication&>(app).exec();
 }

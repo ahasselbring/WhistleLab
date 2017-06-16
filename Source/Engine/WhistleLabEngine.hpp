@@ -31,9 +31,9 @@ public:
 signals:
   /**
    * @brief sampleDatabaseChanged signals that the sample database has changed
-   * @param sampleDatabase a copy of the new sample database
+   * @param sampleDatabase a reference to the new sample database
    */
-  void sampleDatabaseChanged(const SampleDatabase sampleDatabase);
+  void sampleDatabaseChanged(const SampleDatabase& sampleDatabase);
 public slots:
   /**
    * @brief evaluateDetector evaluates a detector on the currently opened database

@@ -16,8 +16,6 @@ class QCloseEvent;
 class QMenu;
 class QString;
 class QWidget;
-class QThread;
-class WhistleLabEngine;
 
 /**
  * @class MainWindow is the Qt main window class
@@ -42,9 +40,25 @@ signals:
    * @param writeFileName the name where the old database is written or an empty string
    */
   void fileChanged(const QString& readFileName, const QString& writeFileName);
+  /**
+   * @brief sampleDatabaseChanged signals that the sample database has changed
+   * @param sampleDatabase a reference to the new sample database
+   */
+  void sampleDatabaseChanged(const SampleDatabase& sampleDatabase);
+  /**
+   * @brief evaluateDetectorClicked is emitted when an evaluate button is clicked
+   * @param name the name of the detector that is to be evaluated
+   */
+  void evaluateDetectorClicked(const QString& name);
+  /**
+   * @brief channelSelectedForPlayback is emitted when a channel is selected for playback
+   * @param path the path of the audio file in the sample database
+   * @param channel the channel number of the channel in the file
+   */
+  void channelSelectedForPlayback(const QString& path, const unsigned int channel);
 private slots:
   /**
-   * @brief about shows a message box with infos about this program
+   * @brief about shows a message box with information about this program
    */
   void about();
   /**
@@ -98,8 +112,4 @@ private:
   LabelWidget* labelWidget = nullptr;
   /// the widget that views the sample database
   SampleDatabaseWidget* sampleDatabaseWidget = nullptr;
-  /// the worker object
-  WhistleLabEngine* whistleLabEngine = nullptr;
-  /// the worker thread
-  QThread* workerThread = nullptr;
 };

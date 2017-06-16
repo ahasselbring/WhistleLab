@@ -24,7 +24,7 @@ SampleDatabaseWidget::SampleDatabaseWidget(QWidget* parent)
   setWidget(treeWidget);
 }
 
-void SampleDatabaseWidget::updateSampleDatabase(const SampleDatabase sampleDatabase)
+void SampleDatabaseWidget::updateSampleDatabase(const SampleDatabase& sampleDatabase)
 {
   treeWidget->clear();
   if (!sampleDatabase.exists)

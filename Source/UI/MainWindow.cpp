@@ -1,5 +1,5 @@
 /**
- * @file MainWindow.cpp implements methods for the MainWindow class
+ * @file MainWindow.cpp implements methods for the main window class
  */
 
 #include <QAction>
@@ -10,7 +10,6 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QString>
-#include <QThread>
 
 #include "Detector/WhistleDetectorFactoryBase.hpp"
 #include "Engine/WhistleLabEngine.hpp"
@@ -26,9 +25,6 @@ MainWindow::MainWindow(QWidget* parent)
   , settings("HULKs", "WhistleLab")
   , recentFiles(settings.value("RecentFiles").toStringList())
 {
-  workerThread = new QThread(this);
-  whistleLabEngine = new WhistleLabEngine;
-  whistleLabEngine->moveToThread(workerThread);
 
   fileOpenAction = new QAction(tr("&Open"), this);
   connect(fileOpenAction, &QAction::triggered, this, &MainWindow::open);
@@ -49,8 +45,8 @@ MainWindow::MainWindow(QWidget* parent)
   for (auto& name : detectorNames)
   {
     QAction* action = evaluateMenu->addAction(QString::fromStdString(name));
-    connect(action, &QAction::triggered, whistleLabEngine,
-      [this, name]{ whistleLabEngine->evaluateDetector(QString::fromStdString(name)); });
+    connect(action, &QAction::triggered, this,
+      [this, name]{ emit evaluateDetectorClicked(QString::fromStdString(name)); });
   }
 
   viewMenu = menuBar()->addMenu(tr("&View"));
@@ -64,31 +60,25 @@ MainWindow::MainWindow(QWidget* parent)
   connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
   sampleDatabaseWidget = new SampleDatabaseWidget(this);
-  connect(whistleLabEngine, &WhistleLabEngine::sampleDatabaseChanged,
+  connect(this, &MainWindow::sampleDatabaseChanged,
     sampleDatabaseWidget, &SampleDatabaseWidget::updateSampleDatabase);
   addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
 
   labelWidget = new LabelWidget(this);
-  connect(whistleLabEngine, &WhistleLabEngine::sampleDatabaseChanged,
+  connect(this, &MainWindow::sampleDatabaseChanged,
     labelWidget, &LabelWidget::updateSampleDatabase);
   connect(sampleDatabaseWidget, &SampleDatabaseWidget::channelSelectedForLabeling,
     labelWidget, &LabelWidget::selectChannel);
   connect(labelWidget, &LabelWidget::channelSelectedForPlayback,
-    whistleLabEngine, &WhistleLabEngine::selectPlaybackAudioChannel);
+    this, &MainWindow::channelSelectedForPlayback);
   addDockWidget(Qt::RightDockWidgetArea, labelWidget);
-
-  connect(this, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeDatabase);
 
   setWindowTitle(tr("WhistleLab"));
   setUnifiedTitleAndToolBarOnMac(true);
-
-  workerThread->start(QThread::NormalPriority);
 }
 
 MainWindow::~MainWindow()
 {
-  workerThread->quit();
-  workerThread->wait();
 }
 
 void MainWindow::about()

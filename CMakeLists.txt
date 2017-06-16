@@ -8,10 +8,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(SOURCES
   Source/Main.cpp
-  Source/Engine/SampleDatabase.cpp
-  Source/Engine/SampleDatabase.hpp
   Source/SampleProvider.cpp
   Source/SampleProvider.hpp
+  Source/WhistleLabApplication.cpp
+  Source/WhistleLabApplication.hpp
   Source/Detector/HULKsDetector.cpp
   Source/Detector/HULKsDetector.hpp
   Source/Detector/WhistleDetector.hpp
@@ -24,6 +24,8 @@ set(SOURCES
   Source/Engine/AudioChannel.hpp
   Source/Engine/AudioFile.cpp
   Source/Engine/AudioFile.hpp
+  Source/Engine/SampleDatabase.cpp
+  Source/Engine/SampleDatabase.hpp
   Source/Engine/WhistleLabel.cpp
   Source/Engine/WhistleLabel.hpp
   Source/Engine/WhistleLabEngine.cpp

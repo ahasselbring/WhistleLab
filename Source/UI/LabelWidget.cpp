@@ -12,7 +12,7 @@ LabelWidget::LabelWidget(QWidget* parent)
   setWindowTitle(tr("Labeling"));
 }
 
-void LabelWidget::updateSampleDatabase(const SampleDatabase sampleDatabase)
+void LabelWidget::updateSampleDatabase(const SampleDatabase& sampleDatabase)
 {
   this->sampleDatabase = sampleDatabase;
 }
