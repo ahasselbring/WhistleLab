@@ -56,6 +56,14 @@ signals:
    * @param channel the channel number of the channel in the file
    */
   void channelSelectedForPlayback(const QString& path, const unsigned int channel);
+  /**
+   * @brief playClicked is emitted when the play button is clicked
+   */
+  void playClicked();
+  /**
+   * @brief pauseClicked is emitted when the pause button is clicked
+   */
+  void pauseClicked();
 private slots:
   /**
    * @brief about shows a message box with information about this program

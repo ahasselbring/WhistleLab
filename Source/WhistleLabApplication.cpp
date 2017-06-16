@@ -23,6 +23,8 @@ WhistleLabApplication::WhistleLabApplication(int& argc, char** argv)
   connect(whistleLabEngine, &WhistleLabEngine::sampleDatabaseChanged, &mainWindow, &MainWindow::sampleDatabaseChanged);
   connect(&mainWindow, &MainWindow::evaluateDetectorClicked, whistleLabEngine, &WhistleLabEngine::evaluateDetector);
   connect(&mainWindow, &MainWindow::channelSelectedForPlayback, whistleLabEngine, &WhistleLabEngine::selectPlaybackAudioChannel);
+  connect(&mainWindow, &MainWindow::playClicked, whistleLabEngine, &WhistleLabEngine::startPlayback);
+  connect(&mainWindow, &MainWindow::pauseClicked, whistleLabEngine, &WhistleLabEngine::stopPlayback);
 
   workerThread->start(QThread::NormalPriority);
 

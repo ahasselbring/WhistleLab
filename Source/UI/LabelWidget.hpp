@@ -9,6 +9,8 @@
 #include "Engine/SampleDatabase.hpp"
 
 
+class QHBoxLayout;
+class QPushButton;
 class QString;
 class QWidget;
 
@@ -31,6 +33,14 @@ signals:
    * @param channel the channel number of the channel in the file
    */
   void channelSelectedForPlayback(const QString& path, const unsigned int channel);
+  /**
+   * @brief playClicked is emitted when the play button is clicked
+   */
+  void playClicked();
+  /**
+   * @brief pauseClicked is emitted when the pause button is clicked
+   */
+  void pauseClicked();
 public slots:
   /**
    * @brief updateSampleDatabase updates the sample database that is viewed
@@ -46,4 +56,12 @@ public slots:
 private:
   /// a local copy of the sample database
   SampleDatabase sampleDatabase;
+  /// the layout that contains the buttons
+  QHBoxLayout* buttonLayout = nullptr;
+  /// a widget that contains the layout because a dock widget already has a layout
+  QWidget* layoutWidget = nullptr;
+  /// the play button
+  QPushButton* playButton = nullptr;
+  /// the pause button
+  QPushButton* pauseButton = nullptr;
 };

@@ -71,6 +71,10 @@ MainWindow::MainWindow(QWidget* parent)
     labelWidget, &LabelWidget::selectChannel);
   connect(labelWidget, &LabelWidget::channelSelectedForPlayback,
     this, &MainWindow::channelSelectedForPlayback);
+  connect(labelWidget, &LabelWidget::playClicked,
+    this, &MainWindow::playClicked);
+  connect(labelWidget, &LabelWidget::pauseClicked,
+    this, &MainWindow::pauseClicked);
   addDockWidget(Qt::RightDockWidgetArea, labelWidget);
 
   setWindowTitle(tr("WhistleLab"));
