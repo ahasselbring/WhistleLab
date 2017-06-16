@@ -20,6 +20,10 @@ AudioSample SampleProvider::getSampleByOffset(const unsigned int offset, const u
   {
     for (auto& audioChannel : audioFile.channels)
     {
+      if (!audioChannel.completelyLabeled)
+      {
+        continue;
+      }
       if (remainingOffset + length <= static_cast<unsigned int>(audioChannel.samples.size()))
       {
         as.label = getLabel(audioChannel, remainingOffset, remainingOffset + length);
