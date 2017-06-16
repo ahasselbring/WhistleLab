@@ -50,21 +50,22 @@ void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db)
   const unsigned int numberOfFalseNegatives = numberOfPositives - numberOfTruePositives;
   const unsigned int numberOfFalsePositives = numberOfNegatives - numberOfTrueNegatives;
   std::cout << "Sensitivity / Recall / Hit Rate / TPR: "
-    << (static_cast<float>(numberOfTruePositives) / numberOfPositives)
+    << (static_cast<float>(numberOfTruePositives) / static_cast<float>(numberOfPositives))
     << '\n';
   std::cout << "Specificity / TNR: "
-    << (static_cast<float>(numberOfTrueNegatives) / numberOfNegatives)
+    << (static_cast<float>(numberOfTrueNegatives) / static_cast<float>(numberOfNegatives))
     << '\n';
   std::cout << "Precision / PPV: "
-    << (static_cast<float>(numberOfTruePositives) / (numberOfTruePositives + numberOfFalsePositives))
+    << (static_cast<float>(numberOfTruePositives) / static_cast<float>(numberOfTruePositives + numberOfFalsePositives))
     << '\n';
   std::cout << "NPV: "
-    << (static_cast<float>(numberOfTrueNegatives) / (numberOfTrueNegatives + numberOfFalseNegatives))
+    << (static_cast<float>(numberOfTrueNegatives) / static_cast<float>(numberOfTrueNegatives + numberOfFalseNegatives))
     << '\n';
   std::cout << "Accuracy: "
-    << (static_cast<float>(numberOfTruePositives + numberOfTrueNegatives) / numberOfTests)
+    << (static_cast<float>(numberOfTruePositives + numberOfTrueNegatives) / static_cast<float>(numberOfTests))
     << '\n';
   std::cout << "Balanced accuracy: "
-    << (0.5f * (static_cast<float>(numberOfTruePositives) / numberOfPositives + static_cast<float>(numberOfTrueNegatives) / numberOfNegatives))
+    << (0.5f * (static_cast<float>(numberOfTruePositives) / static_cast<float>(numberOfPositives)
+      + static_cast<float>(numberOfTrueNegatives) / static_cast<float>(numberOfNegatives)))
     << '\n';
 }

@@ -42,7 +42,7 @@ bool NaoDevilsDetector::classify(const std::vector<float>& samples, const unsign
     realBuffer[i] = samples[i];
     if (useHannWindowing)
     {
-      realBuffer[i] *= std::pow(std::sin(static_cast<float>(M_PI) * i / windowSize), 2.0f);
+      realBuffer[i] *= std::pow(std::sin(static_cast<float>(M_PI) * static_cast<float>(i) / windowSize), 2.0f);
     }
   }
 

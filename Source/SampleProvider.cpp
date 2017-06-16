@@ -61,5 +61,5 @@ float SampleProvider::getLabel(const AudioChannel& audioChannel, const int start
       whistleSamples += std::min(whistleLabel.end, end) - std::max(start, whistleLabel.start);
     }
   }
-  return static_cast<float>(whistleSamples) / totalLength;
+  return static_cast<float>(whistleSamples) / static_cast<float>(totalLength);
 }

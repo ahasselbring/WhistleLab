@@ -90,7 +90,7 @@ void WhistleLabEngine::selectPlaybackAudioChannel(const QString& path, const uns
           }
 
           audioOutputArray.setRawData(reinterpret_cast<const char*>(audioChannel.samples.data()),
-            audioChannel.samples.size() * sizeof(float));
+            static_cast<uint>(audioChannel.samples.size() * sizeof(float)));
           audioOutputBuffer.open(QIODevice::ReadOnly);
 
           audioOutput = new QAudioOutput(audioDeviceInfo, format, this);

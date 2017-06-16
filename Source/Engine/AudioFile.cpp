@@ -30,7 +30,7 @@ void AudioFile::read(const QJsonObject& object, const QDir& basedir)
     throw std::runtime_error("Audio file has different number of channels than indicated in sample database!");
   }
   sampleRate = sfinfo.samplerate;
-  samples.resize(sfinfo.frames * sfinfo.channels);
+  samples.resize(static_cast<int>(sfinfo.frames * sfinfo.channels));
   if (sf_readf_float(f, samples.data(), sfinfo.frames) != sfinfo.frames)
   {
     sf_close(f);

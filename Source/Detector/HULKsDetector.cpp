@@ -40,8 +40,8 @@ bool HULKsDetector::classify(const std::vector<float>& samples, const unsigned i
 
   const std::vector<std::complex<double>>& freqData = complexBuffer;
   const double freqResolution = static_cast<double>(bufferSize) / sampleRate;
-  const unsigned int minFreqIndex = std::ceil(minFrequency * freqResolution);
-  const unsigned int maxFreqIndex = std::ceil(maxFrequency * freqResolution);
+  const unsigned int minFreqIndex = static_cast<unsigned int>(std::ceil(minFrequency * freqResolution));
+  const unsigned int maxFreqIndex = static_cast<unsigned int>(std::ceil(maxFrequency * freqResolution));
 
   if (maxFreqIndex >= freqData.size())
   {

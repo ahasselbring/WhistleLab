@@ -44,7 +44,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 
 add_executable(whistle ${SOURCES})
-target_compile_options(whistle PRIVATE -std=c++14 -Wall -Wextra -pedantic
+target_compile_options(whistle PRIVATE -std=c++14 -Wall -Wextra -Wconversion -pedantic
   -Werror -pedantic-errors)
 target_include_directories(whistle PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/Source")
