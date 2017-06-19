@@ -45,7 +45,7 @@ private:
   /// the maximum frequency of the whistle band (a parameter)
   static constexpr double maxFrequency = 4000;
   /// the threshold for whistle power over stop band power (a parameter)
-  static constexpr double threshold = 50;
+  static constexpr double threshold = 500;
   /// a buffer for the real input of the FFT
   std::vector<double> realBuffer;
   /// a buffer for the complex output of the FFT

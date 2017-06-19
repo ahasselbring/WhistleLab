@@ -65,8 +65,14 @@ bool HULKsDetector::classify(const std::vector<float>& samples, const unsigned i
       stopBandPower += abs2;
     }
   }
-  std::cout << "Whistle band power: " << power << '\n';
-  std::cout << "Stop band power: " << stopBandPower << '\n';
+  const double whistleBandRange = maxFrequency - minFrequency;
+  const double stopBandRange = static_cast<double>(sampleRate) / 2 - maxFrequency;
+  // Normalize power to be independent of sample rate.
+  power /= whistleBandRange;
+  stopBandPower /= stopBandRange;
+
+  std::cout << "Normalized whistle band power: " << power << '\n';
+  std::cout << "Normalized stop band power: " << stopBandPower << '\n';
   std::cout << "Ratio: " << (power / stopBandPower) << '\n';
 
   return power / stopBandPower > threshold;
