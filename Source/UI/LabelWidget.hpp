@@ -6,7 +6,7 @@
 
 #include <QDockWidget>
 
-#include "Engine/SampleDatabase.hpp"
+#include "Engine/AudioChannel.hpp"
 
 
 class QHBoxLayout;
@@ -28,12 +28,6 @@ public:
   LabelWidget(QWidget* parent = 0);
 signals:
   /**
-   * @brief channelSelectedForPlayback is emitted when a channel is selected for playback
-   * @param path the path of the audio file in the sample database
-   * @param channel the channel number of the channel in the file
-   */
-  void channelSelectedForPlayback(const QString& path, const unsigned int channel);
-  /**
    * @brief playClicked is emitted when the play button is clicked
    */
   void playClicked();
@@ -43,19 +37,11 @@ signals:
   void pauseClicked();
 public slots:
   /**
-   * @brief updateSampleDatabase updates the sample database that is viewed
-   * @param sampleDatabase a reference to the new sample database
+   * @brief updateChannel updates the channel that is labeled
+   * @param audioChannel a reference to the new audio channel
    */
-  void updateSampleDatabase(const SampleDatabase& sampleDatabase);
-  /**
-   * @brief selectChannel selects a channel for editing in the label widget
-   * @param path the path of the audio file in the sample database
-   * @param channel the channel number of the channel in the file
-   */
-  void selectChannel(const QString& path, const unsigned int channel);
+  void updateChannel(const AudioChannel& audioChannel);
 private:
-  /// a local copy of the sample database
-  SampleDatabase sampleDatabase;
   /// the layout that contains the buttons
   QHBoxLayout* buttonLayout = nullptr;
   /// a widget that contains the layout because a dock widget already has a layout

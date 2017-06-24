@@ -37,7 +37,7 @@ void WhistleLabEngine::changeDatabase(const QString& readFileName, const QString
   {
     sampleDatabase.writeToFile(writeFileName);
   }
-  selectPlaybackAudioChannel("", 0);
+  selectChannel("", 0);
   sampleDatabase.clear();
   if (!readFileName.isEmpty())
   {
@@ -46,10 +46,11 @@ void WhistleLabEngine::changeDatabase(const QString& readFileName, const QString
   emit sampleDatabaseChanged(sampleDatabase);
 }
 
-void WhistleLabEngine::selectPlaybackAudioChannel(const QString& path, const unsigned int channel)
+void WhistleLabEngine::selectChannel(const QString& path, const unsigned int channel)
 {
   if (!sampleDatabase.exists)
   {
+    emit channelChanged(AudioChannel());
     Q_ASSERT(audioOutput == nullptr);
     return;
   }
@@ -64,6 +65,7 @@ void WhistleLabEngine::selectPlaybackAudioChannel(const QString& path, const uns
 
   if (path.isEmpty())
   {
+    emit channelChanged(AudioChannel());
     return;
   }
 
@@ -86,6 +88,7 @@ void WhistleLabEngine::selectPlaybackAudioChannel(const QString& path, const uns
           format.setCodec("audio/pcm");
           if (!audioDeviceInfo.isFormatSupported(format))
           {
+            emit channelChanged(AudioChannel());
             return;
           }
 
@@ -94,6 +97,7 @@ void WhistleLabEngine::selectPlaybackAudioChannel(const QString& path, const uns
           audioOutputBuffer.open(QIODevice::ReadOnly);
 
           audioOutput = new QAudioOutput(audioDeviceInfo, format, this);
+          emit channelChanged(audioChannel);
           return;
         }
       }

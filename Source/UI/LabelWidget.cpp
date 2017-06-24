@@ -30,17 +30,6 @@ LabelWidget::LabelWidget(QWidget* parent)
   setWidget(layoutWidget);
 }
 
-void LabelWidget::updateSampleDatabase(const SampleDatabase& sampleDatabase)
+void LabelWidget::updateChannel(const AudioChannel&)
 {
-  this->sampleDatabase = sampleDatabase;
-}
-
-void LabelWidget::selectChannel(const QString& path, const unsigned int channel)
-{
-  if (!sampleDatabase.exists)
-  {
-    return;
-  }
-
-  emit channelSelectedForPlayback(path, channel);
 }

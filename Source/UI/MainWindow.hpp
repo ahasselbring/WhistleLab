@@ -51,11 +51,16 @@ signals:
    */
   void evaluateDetectorClicked(const QString& name);
   /**
-   * @brief channelSelectedForPlayback is emitted when a channel is selected for playback
+   * @brief channelSelected is emitted when a channel is selected
    * @param path the path of the audio file in the sample database
    * @param channel the channel number of the channel in the file
    */
-  void channelSelectedForPlayback(const QString& path, const unsigned int channel);
+  void channelSelected(const QString& path, const unsigned int channel);
+  /**
+   * @brief channelChanged is emitted when the active channel has changed
+   * @param audioChannel a reference to the new audio channel
+   */
+  void channelChanged(const AudioChannel& audioChannel);
   /**
    * @brief playClicked is emitted when the play button is clicked
    */

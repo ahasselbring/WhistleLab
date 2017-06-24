@@ -62,15 +62,13 @@ MainWindow::MainWindow(QWidget* parent)
   sampleDatabaseWidget = new SampleDatabaseWidget(this);
   connect(this, &MainWindow::sampleDatabaseChanged,
     sampleDatabaseWidget, &SampleDatabaseWidget::updateSampleDatabase);
+  connect(sampleDatabaseWidget, &SampleDatabaseWidget::channelSelectedForLabeling,
+    this, &MainWindow::channelSelected);
   addDockWidget(Qt::LeftDockWidgetArea, sampleDatabaseWidget);
 
   labelWidget = new LabelWidget(this);
-  connect(this, &MainWindow::sampleDatabaseChanged,
-    labelWidget, &LabelWidget::updateSampleDatabase);
-  connect(sampleDatabaseWidget, &SampleDatabaseWidget::channelSelectedForLabeling,
-    labelWidget, &LabelWidget::selectChannel);
-  connect(labelWidget, &LabelWidget::channelSelectedForPlayback,
-    this, &MainWindow::channelSelectedForPlayback);
+  connect(this, &MainWindow::channelChanged,
+    labelWidget, &LabelWidget::updateChannel);
   connect(labelWidget, &LabelWidget::playClicked,
     this, &MainWindow::playClicked);
   connect(labelWidget, &LabelWidget::pauseClicked,

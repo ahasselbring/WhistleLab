@@ -22,7 +22,8 @@ WhistleLabApplication::WhistleLabApplication(int& argc, char** argv)
   connect(&mainWindow, &MainWindow::fileChanged, whistleLabEngine, &WhistleLabEngine::changeDatabase);
   connect(whistleLabEngine, &WhistleLabEngine::sampleDatabaseChanged, &mainWindow, &MainWindow::sampleDatabaseChanged);
   connect(&mainWindow, &MainWindow::evaluateDetectorClicked, whistleLabEngine, &WhistleLabEngine::evaluateDetector);
-  connect(&mainWindow, &MainWindow::channelSelectedForPlayback, whistleLabEngine, &WhistleLabEngine::selectPlaybackAudioChannel);
+  connect(&mainWindow, &MainWindow::channelSelected, whistleLabEngine, &WhistleLabEngine::selectChannel);
+  connect(whistleLabEngine, &WhistleLabEngine::channelChanged, &mainWindow, &MainWindow::channelChanged);
   connect(&mainWindow, &MainWindow::playClicked, whistleLabEngine, &WhistleLabEngine::startPlayback);
   connect(&mainWindow, &MainWindow::pauseClicked, whistleLabEngine, &WhistleLabEngine::stopPlayback);
 

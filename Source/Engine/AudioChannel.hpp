@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <QMetaType>
 #include <QVector>
 
 #include "WhistleLabel.hpp"
@@ -38,3 +39,5 @@ public:
   /// whether the labeling is complete (otherwise it is dangerous to sample negatives from this channel)
   bool completelyLabeled = false;
 };
+
+Q_DECLARE_METATYPE(AudioChannel)

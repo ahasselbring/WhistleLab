@@ -34,6 +34,11 @@ signals:
    * @param sampleDatabase a reference to the new sample database
    */
   void sampleDatabaseChanged(const SampleDatabase& sampleDatabase);
+  /**
+   * @brief channelChanged is emitted when the active channel has changed
+   * @param audioChannel a reference to the new audio channel
+   */
+  void channelChanged(const AudioChannel& audioChannel);
 public slots:
   /**
    * @brief evaluateDetector evaluates a detector on the currently opened database
@@ -47,11 +52,11 @@ public slots:
    */
   void changeDatabase(const QString& readFileName, const QString& writeFileName);
   /**
-   * @brief selectPlaybackAudioChannel selects an audio channel for playback
+   * @brief selectChannel selects an audio channel
    * @param path the path of the audio file in the sample database
    * @param channel the channel number of the channel in the file
    */
-  void selectPlaybackAudioChannel(const QString& path, const unsigned int channel);
+  void selectChannel(const QString& path, const unsigned int channel);
   /**
    * @brief setPlaybackVolume sets the volume at which channels are played back
    * @param volume a number between 0 and 1
