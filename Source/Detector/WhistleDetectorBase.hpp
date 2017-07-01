@@ -32,6 +32,11 @@ public:
    */
   virtual bool classify(const std::vector<float>& samples, const unsigned int sampleRate) = 0;
   /**
+   * @brief trainOnDatabase trains a detector on a given database
+   * @param db the database on which the detector is trained
+   */
+  virtual void trainOnDatabase(const SampleDatabase& db);
+  /**
    * @brief evaluateOnDatabase evaluates a detector on a given database
    * @param db the database on which the detector is evaluated
    */

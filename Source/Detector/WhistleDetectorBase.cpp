@@ -69,3 +69,8 @@ void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db)
       + static_cast<float>(numberOfTrueNegatives) / static_cast<float>(numberOfNegatives)))
     << '\n';
 }
+
+void WhistleDetectorBase::trainOnDatabase(const SampleDatabase&)
+{
+  std::cerr << "The derived detector doesn't seem to support training!\n";
+}
