@@ -26,6 +26,7 @@ WhistleLabApplication::WhistleLabApplication(int& argc, char** argv)
   connect(whistleLabEngine, &WhistleLabEngine::channelChanged, &mainWindow, &MainWindow::channelChanged);
   connect(&mainWindow, &MainWindow::playClicked, whistleLabEngine, &WhistleLabEngine::startPlayback);
   connect(&mainWindow, &MainWindow::pauseClicked, whistleLabEngine, &WhistleLabEngine::stopPlayback);
+  connect(whistleLabEngine, &WhistleLabEngine::playbackPositionChanged, &mainWindow, &MainWindow::playbackPositionChanged);
 
   workerThread->start(QThread::NormalPriority);
 

@@ -97,6 +97,8 @@ void WhistleLabEngine::selectChannel(const QString& path, const unsigned int cha
           audioOutputBuffer.open(QIODevice::ReadOnly);
 
           audioOutput = new QAudioOutput(audioDeviceInfo, format, this);
+          connect(audioOutput, &QAudioOutput::notify, this, &WhistleLabEngine::updatePlaybackPosition);
+          audioOutput->setNotifyInterval(200);
           emit channelChanged(audioChannel);
           return;
         }
@@ -136,4 +138,10 @@ void WhistleLabEngine::stopPlayback()
   {
     audioOutput->suspend();
   }
+}
+
+void WhistleLabEngine::updatePlaybackPosition()
+{
+  Q_ASSERT(audioOutput != nullptr);
+  emit playbackPositionChanged(static_cast<unsigned int>(audioOutput->processedUSecs() * audioOutput->format().sampleRate() / 1000000));
 }

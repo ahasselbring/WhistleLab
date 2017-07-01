@@ -62,6 +62,11 @@ signals:
    */
   void channelChanged(const AudioChannel& audioChannel);
   /**
+   * @brief playbackPositionChanged is emitted when the playback position has changed (of course not every frame)
+   * @param pos the new playback position in samples since the beginning of the file
+   */
+  void playbackPositionChanged(const unsigned int pos);
+  /**
    * @brief playClicked is emitted when the play button is clicked
    */
   void playClicked();

@@ -39,6 +39,11 @@ signals:
    * @param audioChannel a reference to the new audio channel
    */
   void channelChanged(const AudioChannel& audioChannel);
+  /**
+   * @brief playbackPositionChanged is emitted when the playback position has changed (of course not every frame)
+   * @param pos the new playback position in samples since the beginning of the file
+   */
+  void playbackPositionChanged(const unsigned int pos);
 public slots:
   /**
    * @brief evaluateDetector evaluates a detector on the currently opened database
@@ -70,6 +75,11 @@ public slots:
    * @brief stopPlayback pauses audio playback
    */
   void stopPlayback();
+private slots:
+  /**
+   * @brief updatePlaybackPosition emits a playbackPositionChanged signal
+   */
+  void updatePlaybackPosition();
 private:
   /// info about the audio playback device
   QAudioDeviceInfo audioDeviceInfo;
