@@ -4,70 +4,44 @@
 
 #include <iostream>
 
-#include "SampleProvider.hpp"
-
 #include "WhistleDetectorBase.hpp"
 
 
 void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db)
 {
-  const unsigned int maxNumberOfTests = 100000;
-  SampleProvider sampleProvider(db);
-  AudioSample as;
-  unsigned int numberOfTests;
-  unsigned int numberOfPositives = 0, numberOfTruePositives = 0, numberOfTrueNegatives = 0;
-  unsigned int offset = 0;
-  for (numberOfTests = 0; numberOfTests < maxNumberOfTests; numberOfTests++)
+  std::cout << "\n\nStart evaluation!\n\n";
+  for (const auto& file : db.audioFiles)
   {
-    as = sampleProvider.getSampleByOffset(offset, getPreferredBufferSize());
-    if (as.sampleRate == 0)
+    EvaluationHandle eh(file);
+    evaluate(eh);
+    std::vector<unsigned int> labelHits(file.channels[0].whistleLabels.size(), 0);
+    for (auto pos : eh.detections)
     {
-      break;
+      bool hit = false;
+      for (int i = 0; i < file.channels[0].whistleLabels.size(); i++)
+      {
+        auto& wl = file.channels[0].whistleLabels[i];
+        if (static_cast<unsigned int>(wl.start) < pos && pos < static_cast<unsigned int>(wl.end))
+        {
+          labelHits[i]++;
+          hit = true;
+          break;
+        }
+      }
+      if (!hit && file.channels[0].completelyLabeled)
+      {
+        std::cout << "False detection in " << file.path.toStdString() << " at " << pos << " (i.e. "
+                  << (static_cast<float>(pos) / static_cast<float>(file.sampleRate)) << ")!\n";
+      }
     }
-    const float predictedLabel = classify(as.samples, as.sampleRate);
-    const bool whistleDetected = predictedLabel > 0.5f;
-    const bool whistleExpected = as.label > 0.5f;
-    if (whistleExpected)
+    for (int i = 0; i < file.channels[0].whistleLabels.size(); i++)
     {
-      numberOfPositives++;
+      std::cout << "Whistle in " << file.path.toStdString() << " at " << file.channels[0].whistleLabels[i].start
+                << " (i.e. "
+                << (static_cast<float>(file.channels[0].whistleLabels[i].start) / static_cast<float>(file.sampleRate))
+                << ") has been " << (labelHits[i] ? "hit" : "missed") << "!\n";
     }
-    if (whistleDetected && whistleExpected)
-    {
-      numberOfTruePositives++;
-    }
-    else if (!whistleDetected && !whistleExpected)
-    {
-      numberOfTrueNegatives++;
-    }
-    offset += getPreferredBufferSize() / 2;
   }
-  if (numberOfTests == 0)
-  {
-    std::cout << "The sample set seems to be very small!\n";
-    return;
-  }
-  const unsigned int numberOfNegatives = numberOfTests - numberOfPositives;
-  const unsigned int numberOfFalseNegatives = numberOfPositives - numberOfTruePositives;
-  const unsigned int numberOfFalsePositives = numberOfNegatives - numberOfTrueNegatives;
-  std::cout << "Sensitivity / Recall / Hit Rate / TPR: "
-    << (static_cast<float>(numberOfTruePositives) / static_cast<float>(numberOfPositives))
-    << '\n';
-  std::cout << "Specificity / TNR: "
-    << (static_cast<float>(numberOfTrueNegatives) / static_cast<float>(numberOfNegatives))
-    << '\n';
-  std::cout << "Precision / PPV: "
-    << (static_cast<float>(numberOfTruePositives) / static_cast<float>(numberOfTruePositives + numberOfFalsePositives))
-    << '\n';
-  std::cout << "NPV: "
-    << (static_cast<float>(numberOfTrueNegatives) / static_cast<float>(numberOfTrueNegatives + numberOfFalseNegatives))
-    << '\n';
-  std::cout << "Accuracy: "
-    << (static_cast<float>(numberOfTruePositives + numberOfTrueNegatives) / static_cast<float>(numberOfTests))
-    << '\n';
-  std::cout << "Balanced accuracy: "
-    << (0.5f * (static_cast<float>(numberOfTruePositives) / static_cast<float>(numberOfPositives)
-      + static_cast<float>(numberOfTrueNegatives) / static_cast<float>(numberOfNegatives)))
-    << '\n';
 }
 
 void WhistleDetectorBase::trainOnDatabase(const SampleDatabase&)

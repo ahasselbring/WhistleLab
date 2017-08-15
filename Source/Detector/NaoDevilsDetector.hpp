@@ -26,17 +26,10 @@ public:
    */
   ~NaoDevilsDetector();
   /**
-   * @brief getPreferredBufferSize returns the number of samples that the detector wants to get
-   * @return the number of samples that the detector wants to get
+   * @brief evaluate evaluates the NaoDevilsDetector on a given file
+   * @param eh delivers and collects data for the evaluation
    */
-  unsigned int getPreferredBufferSize() const override;
-  /**
-   * @brief classify should determine whether a short audio snippet contains a whistle sound
-   * @param samples a single channel vector of audio samples that may or may not contain a whistle sound
-   * @param sampleRate the sample rate in samples per second
-   * @return true iff the given audio sample contains a whistle
-   */
-  bool classify(const std::vector<float>& samples, const unsigned int sampleRate) override;
+  void evaluate(EvaluationHandle& eh) override;
 private:
   /// the FFT window size (a parameter)
   static constexpr unsigned int windowSize = 1024;

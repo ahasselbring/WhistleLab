@@ -8,6 +8,8 @@
 
 #include "Engine/SampleDatabase.hpp"
 
+#include "EvaluationHandle.hpp"
+
 
 /**
  * @class WhistleDetectorBase is an interface for single channel whistle detectors
@@ -20,17 +22,10 @@ public:
    */
   virtual ~WhistleDetectorBase() = default;
   /**
-   * @brief getPreferredBufferSize returns the number of samples that the detector wants to get
-   * @return the number of samples that the detector wants to get
+   * @brief evaluate evaluates a detector on a given file
+   * @param eh delivers and collects data for the evaluation
    */
-  virtual unsigned int getPreferredBufferSize() const = 0;
-  /**
-   * @brief classify should determine whether a short audio snippet contains a whistle sound
-   * @param samples a single channel vector of audio samples that may or may not contain a whistle sound
-   * @param sampleRate the sample rate in samples per second
-   * @return true iff the given audio sample contains a whistle
-   */
-  virtual bool classify(const std::vector<float>& samples, const unsigned int sampleRate) = 0;
+  virtual void evaluate(EvaluationHandle& eh) = 0;
   /**
    * @brief trainOnDatabase trains a detector on a given database
    * @param db the database on which the detector is trained

@@ -23,57 +23,48 @@ HULKsDetector::~HULKsDetector()
   fftw_destroy_plan(fftPlan);
 }
 
-unsigned int HULKsDetector::getPreferredBufferSize() const
+void HULKsDetector::evaluate(EvaluationHandle& eh)
 {
-  return bufferSize;
-}
-
-bool HULKsDetector::classify(const std::vector<float>& samples, const unsigned int sampleRate)
-{
-  if (samples.size() != bufferSize)
-  {
-    std::cerr << "HULKsDetector: Input sample size does not equal the desired size!\n";
-    return false;
-  }
-  std::copy(samples.begin(), samples.end(), realBuffer.begin());
-  fftw_execute(fftPlan);
-
+  std::array<float, bufferSize> samples;
   const std::vector<std::complex<double>>& freqData = complexBuffer;
-  const double freqResolution = static_cast<double>(bufferSize) / sampleRate;
+  const double freqResolution = static_cast<double>(bufferSize) / eh.getSampleRate();
+  const double whistleBandRange = maxFrequency - minFrequency;
+  const double stopBandRange = static_cast<double>(eh.getSampleRate() / 2) - maxFrequency;
   const unsigned int minFreqIndex = static_cast<unsigned int>(std::ceil(minFrequency * freqResolution));
   const unsigned int maxFreqIndex = static_cast<unsigned int>(std::ceil(maxFrequency * freqResolution));
-
-  if (maxFreqIndex >= freqData.size())
+  if (maxFreqIndex >= complexBuffer.size())
   {
     std::cerr << "HULKsDetector: maxFreqIndex " << maxFreqIndex << " is larger than the Nyquist frequency!\n";
-    return false;
+    return;
   }
 
-  double power = 0;
-  double stopBandPower = 0;
-
-  for (unsigned int i = minFreqIndex; i < freqData.size(); i++)
+  while (eh.readSingleChannel(samples.data(), bufferSize) == bufferSize)
   {
-    // The multiplication by freqResolution is not strictly necessary since it cancels out in the division below.
-    const double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
-    if (i < maxFreqIndex)
+    std::copy(samples.begin(), samples.end(), realBuffer.begin());
+    fftw_execute(fftPlan);
+
+    double power = 0;
+    double stopBandPower = 0;
+
+    for (unsigned int i = minFreqIndex; i < freqData.size(); i++)
     {
-      power += abs2;
+      // The multiplication by freqResolution is not strictly necessary since it cancels out in the division below.
+      const double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
+      if (i < maxFreqIndex)
+      {
+        power += abs2;
+      }
+      else
+      {
+        stopBandPower += abs2;
+      }
     }
-    else
+    // Normalize power to be independent of sample rate.
+    power /= whistleBandRange;
+    stopBandPower /= stopBandRange;
+    if (power / stopBandPower > threshold)
     {
-      stopBandPower += abs2;
+      eh.report(-static_cast<int>(bufferSize) / 2);
     }
   }
-  const double whistleBandRange = maxFrequency - minFrequency;
-  const double stopBandRange = static_cast<double>(sampleRate) / 2 - maxFrequency;
-  // Normalize power to be independent of sample rate.
-  power /= whistleBandRange;
-  stopBandPower /= stopBandRange;
-
-  std::cout << "Normalized whistle band power: " << power << '\n';
-  std::cout << "Normalized stop band power: " << stopBandPower << '\n';
-  std::cout << "Ratio: " << (power / stopBandPower) << '\n';
-
-  return power / stopBandPower > threshold;
 }

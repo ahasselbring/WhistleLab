@@ -24,80 +24,79 @@ NaoDevilsDetector::~NaoDevilsDetector()
   fftw_destroy_plan(fftPlan);
 }
 
-unsigned int NaoDevilsDetector::getPreferredBufferSize() const
+void NaoDevilsDetector::evaluate(EvaluationHandle& eh)
 {
-  return windowSize;
-}
-
-bool NaoDevilsDetector::classify(const std::vector<float>& samples, const unsigned int sampleRate)
-{
-  if (samples.size() != windowSize)
+  unsigned int ringPos = 0;
+  std::vector<float> buffer(windowSize, 0.0f);
+  // This leads to a swapped buffer in every second cycle (i.e. the first half of the buffer was recorded after the second half).
+  // This is the same way as in the original Nao Devils implementations and has no effect as only the absolute value of the
+  // Fourier transform is used.
+  while (eh.readSingleChannel(buffer.data() + ringPos, windowSize / 2) == windowSize / 2)
   {
-    std::cerr << "NaoDevilsDetector: Input sample size does not equal the desired size!\n";
-    return false;
-  }
-
-  for (unsigned int i = 0; i < windowSize; i++)
-  {
-    realBuffer[i] = samples[i];
-    if (useHannWindowing)
+    ringPos += windowSize / 2;
+    ringPos %= windowSize;
+    for (unsigned int i = 0; i < windowSize; i++)
     {
-      realBuffer[i] *= std::pow(std::sin(static_cast<float>(M_PI) * static_cast<float>(i) / windowSize), 2.0f);
+      realBuffer[i] = buffer[i];
+      if (useHannWindowing)
+      {
+        realBuffer[i] *= std::pow(std::sin(static_cast<float>(M_PI) * static_cast<float>(i) / windowSize), 2.0f);
+      }
     }
-  }
 
-  fftw_execute(fftPlan);
+    fftw_execute(fftPlan);
 
-  // This code is intentionally not that efficient/nice to keep it close to the original implementation.
-  std::vector<double> amplitudes(ampSize);
-  for (unsigned int i = 0; i < ampSize; i++)
-  {
-    const double abs2 = (complexBuffer[i].real() * complexBuffer[i].real() + complexBuffer[i].imag() * complexBuffer[i].imag());
-    amplitudes[i] = std::sqrt(abs2);
-  }
-
-  unsigned int minI = static_cast<unsigned int>(minFrequency * windowSize / sampleRate);
-  unsigned int maxI = static_cast<unsigned int>(maxFrequency * windowSize / sampleRate);
-  assert(maxI < ampSize);
-  unsigned int peakPos = minI;
-  for (unsigned int i = minI; i <= maxI; i++)
-  {
-    if (amplitudes[i] > amplitudes[peakPos])
+    // This code is intentionally not that efficient/nice to keep it close to the original implementation.
+    std::vector<double> amplitudes(ampSize);
+    for (unsigned int i = 0; i < ampSize; i++)
     {
-      peakPos = i;
+      const double
+        abs2 = (complexBuffer[i].real() * complexBuffer[i].real() + complexBuffer[i].imag() * complexBuffer[i].imag());
+      amplitudes[i] = std::sqrt(abs2);
     }
-  }
-  if (amplitudes[peakPos] >= minAmp)
-  {
-    minI = static_cast<unsigned int>(peakPos * overtoneMultMin1);
-    maxI = static_cast<unsigned int>(peakPos * overtoneMultMax1);
+
+    unsigned int minI = static_cast<unsigned int>(minFrequency * windowSize / eh.getSampleRate());
+    unsigned int maxI = static_cast<unsigned int>(maxFrequency * windowSize / eh.getSampleRate());
     assert(maxI < ampSize);
-    unsigned int peak1Pos = minI;
+    unsigned int peakPos = minI;
     for (unsigned int i = minI; i <= maxI; i++)
     {
-      if (amplitudes[i] > amplitudes[peak1Pos])
+      if (amplitudes[i] > amplitudes[peakPos])
       {
-        peak1Pos = i;
+        peakPos = i;
       }
     }
-    if (amplitudes[peak1Pos] >= overtoneMinAmp1)
+    if (amplitudes[peakPos] >= minAmp)
     {
-      minI = static_cast<unsigned int>(peakPos * overtoneMultMin2);
-      maxI = static_cast<unsigned int>(peakPos * overtoneMultMax2);
+      minI = static_cast<unsigned int>(peakPos * overtoneMultMin1);
+      maxI = static_cast<unsigned int>(peakPos * overtoneMultMax1);
       assert(maxI < ampSize);
-      unsigned int peak2Pos = minI;
+      unsigned int peak1Pos = minI;
       for (unsigned int i = minI; i <= maxI; i++)
       {
-        if (amplitudes[i] > amplitudes[peak2Pos])
+        if (amplitudes[i] > amplitudes[peak1Pos])
         {
-          peak2Pos = i;
+          peak1Pos = i;
         }
       }
-      if (amplitudes[peak2Pos] >= overtoneMinAmp2)
+      if (amplitudes[peak1Pos] >= overtoneMinAmp1)
       {
-        return true;
+        minI = static_cast<unsigned int>(peakPos * overtoneMultMin2);
+        maxI = static_cast<unsigned int>(peakPos * overtoneMultMax2);
+        assert(maxI < ampSize);
+        unsigned int peak2Pos = minI;
+        for (unsigned int i = minI; i <= maxI; i++)
+        {
+          if (amplitudes[i] > amplitudes[peak2Pos])
+          {
+            peak2Pos = i;
+          }
+        }
+        if (amplitudes[peak2Pos] >= overtoneMinAmp2)
+        {
+          eh.report(-static_cast<int>(windowSize) / 2);
+        }
       }
     }
   }
-  return false;
 }

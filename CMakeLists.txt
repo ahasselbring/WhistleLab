@@ -8,10 +8,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(SOURCES
   Source/Main.cpp
-  Source/SampleProvider.cpp
-  Source/SampleProvider.hpp
   Source/WhistleLabApplication.cpp
   Source/WhistleLabApplication.hpp
+  Source/Detector/EvaluationHandle.cpp
+  Source/Detector/EvaluationHandle.hpp
   Source/Detector/HULKsDetector.cpp
   Source/Detector/HULKsDetector.hpp
   Source/Detector/NaoDevilsDetector.cpp
