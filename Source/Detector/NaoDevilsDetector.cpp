@@ -26,13 +26,14 @@ NaoDevilsDetector::~NaoDevilsDetector()
 
 void NaoDevilsDetector::evaluate(EvaluationHandle& eh)
 {
-  unsigned int ringPos = 0;
+  unsigned int attackCount = 0, releaseCount = release, ringPos = 0;
   std::vector<float> buffer(windowSize, 0.0f);
   // This leads to a swapped buffer in every second cycle (i.e. the first half of the buffer was recorded after the second half).
   // This is the same way as in the original Nao Devils implementations and has no effect as only the absolute value of the
   // Fourier transform is used.
   while (eh.readSingleChannel(buffer.data() + ringPos, windowSize / 2) == windowSize / 2)
   {
+    bool detected = false;
     ringPos += windowSize / 2;
     ringPos %= windowSize;
     for (unsigned int i = 0; i < windowSize; i++)
@@ -94,9 +95,26 @@ void NaoDevilsDetector::evaluate(EvaluationHandle& eh)
         }
         if (amplitudes[peak2Pos] >= overtoneMinAmp2)
         {
-          eh.report(-static_cast<int>(windowSize) / 2);
+          attackCount++;
+          if (attackCount >= attack)
+          {
+            detected = true;
+          }
         }
       }
+    }
+    if (detected)
+    {
+      releaseCount = 0;
+      eh.report(-static_cast<int>(windowSize) / 2);
+    }
+    else if (releaseCount < release)
+    {
+      releaseCount++;
+      // The following line is not present in the original Nao Devils code.
+      // They would reset attackCount only when not in the SET state (I think that is a bug in their code).
+      attackCount = 0;
+      eh.report(-static_cast<int>(windowSize) / 2);
     }
   }
 }

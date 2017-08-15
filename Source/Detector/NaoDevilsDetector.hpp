@@ -51,6 +51,10 @@ private:
   static constexpr double overtoneMultMax2 = 3.2;
   /// the minimum amplitude of the second overtone (a parameter)
   static constexpr double overtoneMinAmp2 = 2.0;
+  /// the number of buffers that are classified positive after a whistle has been detected (a parameter)
+  static constexpr unsigned int release = 4;
+  /// the number of successive buffers that have to be classified positive to be accepted as whistle (a parameter)
+  static constexpr unsigned int attack = 4;
   /// whether Hann windowing should be used before executing the FFT (a parameter)
   static constexpr bool useHannWindowing = true;
   /// the number of amplitudes coming out of the FFT (derived parameter)
