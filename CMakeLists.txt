@@ -10,6 +10,8 @@ set(SOURCES
   Source/Main.cpp
   Source/WhistleLabApplication.cpp
   Source/WhistleLabApplication.hpp
+  Source/Detector/AHDetector.cpp
+  Source/Detector/AHDetector.hpp
   Source/Detector/EvaluationHandle.cpp
   Source/Detector/EvaluationHandle.hpp
   Source/Detector/HULKsDetector.cpp
