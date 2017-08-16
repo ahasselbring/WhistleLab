@@ -82,16 +82,19 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     const double stopBandRange = minFreqIndex2 - maxFreqIndex;
     const double whistleBandRange2 = maxFreqIndex2 - minFreqIndex2;
     const double stopBandRange2 = static_cast<double>(freqData.size()) - maxFreqIndex2;
-    if ((whistlePower[0] / whistleBandRange) < (stopBandPower[0] / stopBandRange) * whistleBand0OverStopBand0)
+    whistlePower[0] /= whistleBandRange;
+    whistlePower[1] /= whistleBandRange2;
+    stopBandPower[0] /= stopBandRange;
+    stopBandPower[1] /= stopBandRange2;
+    if (whistlePower[0] < stopBandPower[0] * whistleBand0OverStopBand0)
     {
       continue;
     }
-    if ((whistlePower[1] / whistleBandRange2) < (stopBandPower[0] / stopBandRange) * whistleBand1OverStopBand0)
+    if (whistlePower[1] < stopBandPower[0] * whistleBand1OverStopBand0)
     {
       continue;
     }
-    if ((whistlePower[0] + whistlePower[1]) / (whistleBandRange + whistleBandRange2)
-      < (stopBandPower[0] + stopBandPower[1]) / (stopBandRange + stopBandRange2) * whistleBandOverStopBand)
+    if ((whistlePower[0] + whistlePower[1]) < (stopBandPower[0] + stopBandPower[1]) * whistleBandOverStopBand)
     {
       continue;
     }
