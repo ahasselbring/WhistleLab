@@ -12,7 +12,7 @@
 
 
 /**
- * @brief HULKsDetector is the whistle detector of the SPL team HULKs
+ * @class HULKsDetector is the whistle detector of the SPL team HULKs
  */
 class HULKsDetector : public WhistleDetector<HULKsDetector>
 {
