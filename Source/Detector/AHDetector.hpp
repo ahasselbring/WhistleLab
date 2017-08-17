@@ -49,6 +49,8 @@ private:
   std::vector<double> realBuffer;
   /// a buffer for the complex output of the FFT
   std::vector<std::complex<double>> complexBuffer;
+  /// a buffer for the power at each frequency
+  std::vector<double> powerBuffer;
   /// a plan for FFTW for the FFT
   fftw_plan fftPlan;
 };

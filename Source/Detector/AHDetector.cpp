@@ -14,6 +14,7 @@
 AHDetector::AHDetector()
   : realBuffer(bufferSize)
   , complexBuffer(bufferSize / 2 + 1)
+  , powerBuffer(bufferSize / 2 + 1)
   , fftPlan(fftw_plan_dft_r2c_1d(bufferSize, realBuffer.data(), reinterpret_cast<fftw_complex*>(complexBuffer.data()), FFTW_ESTIMATE))
 {
   static_assert(bufferSize % 2 == 0, "The buffer size has to be even!");
@@ -41,6 +42,10 @@ void AHDetector::evaluate(EvaluationHandle& eh)
   {
     std::copy(samples.begin(), samples.end(), realBuffer.begin());
     fftw_execute(fftPlan);
+    for (unsigned int i = 0; i < freqData.size(); i++)
+    {
+      powerBuffer[i] = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
+    }
 
     double whistlePower[2] = { 0, 0 };
     double stopBandPower[2] = { 0, 0 };
@@ -49,8 +54,7 @@ void AHDetector::evaluate(EvaluationHandle& eh)
 
     for (unsigned int i = minFreqIndex; i < maxFreqIndex; i++)
     {
-      // The multiplication by freqResolution is not strictly necessary since it cancels out in the division below.
-      const double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
+      const double abs2 = powerBuffer[i];
       if (abs2 > maxPower)
       {
         maxPower = abs2;
@@ -68,15 +72,15 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     assert(minFreqIndex2 >= 0 && maxFreqIndex2);
     for (int i = maxFreqIndex; i < minFreqIndex2; i++)
     {
-      stopBandPower[0] += (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
+      stopBandPower[0] += powerBuffer[i];
     }
     for (int i = minFreqIndex2; i < maxFreqIndex2; i++)
     {
-      whistlePower[1] += (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
+      whistlePower[1] += powerBuffer[i];
     }
     for (int i = maxFreqIndex2; i < static_cast<int>(freqData.size()); i++)
     {
-      stopBandPower[1] += (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
+      stopBandPower[1] += powerBuffer[i];
     }
     const double whistleBandRange = maxFreqIndex - minFreqIndex;
     const double stopBandRange = minFreqIndex2 - maxFreqIndex;
