@@ -49,7 +49,7 @@ void HULKsDetector::evaluate(EvaluationHandle& eh)
     for (unsigned int i = minFreqIndex; i < freqData.size(); i++)
     {
       // The multiplication by freqResolution is not strictly necessary since it cancels out in the division below.
-      const double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) * freqResolution;
+      const double abs2 = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) / freqResolution;
       if (i < maxFreqIndex)
       {
         power += abs2;
