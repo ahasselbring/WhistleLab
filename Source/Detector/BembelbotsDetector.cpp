@@ -1,5 +1,7 @@
 /**
  * @file BembelbotsDetector.cpp implements methods of the BembelbotsDetector class
+ * The method is taken from and code based on:
+ * https://github.com/Bembelbots/NaoWhistleDetection
  */
 
 #include <algorithm>
