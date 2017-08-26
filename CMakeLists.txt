@@ -12,6 +12,8 @@ set(SOURCES
   Source/WhistleLabApplication.hpp
   Source/Detector/AHDetector.cpp
   Source/Detector/AHDetector.hpp
+  Source/Detector/BembelbotsDetector.cpp
+  Source/Detector/BembelbotsDetector.hpp
   Source/Detector/EvaluationHandle.cpp
   Source/Detector/EvaluationHandle.hpp
   Source/Detector/HULKsDetector.cpp
