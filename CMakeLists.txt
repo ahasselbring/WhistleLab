@@ -20,6 +20,8 @@ set(SOURCES
   Source/Detector/HULKsDetector.hpp
   Source/Detector/NaoDevilsDetector.cpp
   Source/Detector/NaoDevilsDetector.hpp
+  Source/Detector/UNSWDetector.cpp
+  Source/Detector/UNSWDetector.hpp
   Source/Detector/WhistleDetector.hpp
   Source/Detector/WhistleDetectorBase.cpp
   Source/Detector/WhistleDetectorBase.hpp
