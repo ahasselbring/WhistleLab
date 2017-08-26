@@ -36,7 +36,7 @@ public:
    * @param length the number of samples that should be read
    * @return the number of actually read samples
    */
-  int readSingleChannel(float* buf, unsigned int length);
+  unsigned int readSingleChannel(float* buf, unsigned int length);
   /**
    * @brief report reports a whistle detection
    * @param offset the offset of the detection to the current reading position

@@ -22,7 +22,7 @@ unsigned int EvaluationHandle::getNumberOfChannels() const
   return af.numberOfChannels;
 }
 
-int EvaluationHandle::readSingleChannel(float* buf, unsigned int length)
+unsigned int EvaluationHandle::readSingleChannel(float* buf, unsigned int length)
 {
   if (pos + length > static_cast<unsigned int>(af.channels[0].samples.size()))
   {
