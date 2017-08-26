@@ -14,14 +14,14 @@
 NaoDevilsDetector::NaoDevilsDetector()
   : realBuffer(windowSize)
   , complexBuffer(windowSize / 2 + 1)
-  , fftPlan(fftw_plan_dft_r2c_1d(windowSize, realBuffer.data(), reinterpret_cast<fftw_complex*>(complexBuffer.data()), FFTW_ESTIMATE))
+  , fftPlan(fftwf_plan_dft_r2c_1d(windowSize, realBuffer.data(), reinterpret_cast<fftwf_complex*>(complexBuffer.data()), FFTW_ESTIMATE))
 {
   static_assert(windowSize % 2 == 0, "The window size has to be even!");
 }
 
 NaoDevilsDetector::~NaoDevilsDetector()
 {
-  fftw_destroy_plan(fftPlan);
+  fftwf_destroy_plan(fftPlan);
 }
 
 void NaoDevilsDetector::evaluate(EvaluationHandle& eh)
@@ -45,19 +45,19 @@ void NaoDevilsDetector::evaluate(EvaluationHandle& eh)
       }
     }
 
-    fftw_execute(fftPlan);
+    fftwf_execute(fftPlan);
 
     // This code is intentionally not that efficient/nice to keep it close to the original implementation.
-    std::vector<double> amplitudes(ampSize);
+    std::vector<float> amplitudes(ampSize);
     for (unsigned int i = 0; i < ampSize; i++)
     {
-      const double
+      const float
         abs2 = (complexBuffer[i].real() * complexBuffer[i].real() + complexBuffer[i].imag() * complexBuffer[i].imag());
       amplitudes[i] = std::sqrt(abs2);
     }
 
-    unsigned int minI = static_cast<unsigned int>(minFrequency * windowSize / eh.getSampleRate());
-    unsigned int maxI = static_cast<unsigned int>(maxFrequency * windowSize / eh.getSampleRate());
+    unsigned int minI = minFrequency * windowSize / eh.getSampleRate();
+    unsigned int maxI = maxFrequency * windowSize / eh.getSampleRate();
     assert(maxI < ampSize);
     unsigned int peakPos = minI;
     for (unsigned int i = minI; i <= maxI; i++)
@@ -69,8 +69,8 @@ void NaoDevilsDetector::evaluate(EvaluationHandle& eh)
     }
     if (amplitudes[peakPos] >= minAmp)
     {
-      minI = static_cast<unsigned int>(peakPos * overtoneMultMin1);
-      maxI = static_cast<unsigned int>(peakPos * overtoneMultMax1);
+      minI = static_cast<unsigned int>(static_cast<float>(peakPos) * overtoneMultMin1);
+      maxI = static_cast<unsigned int>(static_cast<float>(peakPos) * overtoneMultMax1);
       assert(maxI < ampSize);
       unsigned int peak1Pos = minI;
       for (unsigned int i = minI; i <= maxI; i++)
@@ -82,8 +82,8 @@ void NaoDevilsDetector::evaluate(EvaluationHandle& eh)
       }
       if (amplitudes[peak1Pos] >= overtoneMinAmp1)
       {
-        minI = static_cast<unsigned int>(peakPos * overtoneMultMin2);
-        maxI = static_cast<unsigned int>(peakPos * overtoneMultMax2);
+        minI = static_cast<unsigned int>(static_cast<float>(peakPos) * overtoneMultMin2);
+        maxI = static_cast<unsigned int>(static_cast<float>(peakPos) * overtoneMultMax2);
         assert(maxI < ampSize);
         unsigned int peak2Pos = minI;
         for (unsigned int i = minI; i <= maxI; i++)
