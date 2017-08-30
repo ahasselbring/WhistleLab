@@ -42,6 +42,12 @@ public:
    * @param offset the offset of the detection to the current reading position
    */
   void report(int offset = 0);
+  /**
+   * @brief insideWhistle determines whether the reading position is inside a whistle
+   * @param offset the offset of the query to the current reading position
+   * @return whether the reading position (plus offset) is inside a whistle
+   */
+  int insideWhistle(int offset = 0) const;
 private:
   /// the audio file on which the detector is evaluated
   const AudioFile& af;

@@ -37,3 +37,16 @@ void EvaluationHandle::report(int offset)
 {
   detections.push_back(pos + offset);
 }
+
+int EvaluationHandle::insideWhistle(int offset) const
+{
+  int actualPosition = pos + offset;
+  for (auto& wl : af.channels[0].whistleLabels)
+  {
+    if (wl.start < actualPosition && actualPosition < wl.end)
+    {
+      return actualPosition - wl.start;
+    }
+  }
+  return 0;
+}
