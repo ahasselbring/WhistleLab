@@ -105,3 +105,7 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     eh.report(-static_cast<int>(bufferSize) / 2);
   }
 }
+
+void AHDetector::trainOnDatabase(const SampleDatabase&)
+{
+}

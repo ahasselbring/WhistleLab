@@ -30,6 +30,11 @@ public:
    * @param eh delivers and collects data for the evaluation
    */
   void evaluate(EvaluationHandle& eh) override;
+  /**
+   * @brief trainOnDatabase trains the AHDetector on a given database
+   * @param db the database on which the detector is trained
+   */
+  void trainOnDatabase(const SampleDatabase& db) override;
 private:
   /// the buffer size (a parameter)
   static constexpr unsigned int bufferSize = 4096;
