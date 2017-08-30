@@ -41,6 +41,11 @@ public slots:
    * @param audioChannel a reference to the new audio channel
    */
   void updateChannel(const AudioChannel& audioChannel);
+  /**
+   * @brief updatePlaybackPosition updates the playback position
+   * @param pos the new playback position in samples
+   */
+  void updatePlaybackPosition(const unsigned int pos);
 private:
   /// the layout that contains the buttons
   QHBoxLayout* buttonLayout = nullptr;

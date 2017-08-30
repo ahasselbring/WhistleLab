@@ -33,3 +33,7 @@ LabelWidget::LabelWidget(QWidget* parent)
 void LabelWidget::updateChannel(const AudioChannel&)
 {
 }
+
+void LabelWidget::updatePlaybackPosition(const unsigned int)
+{
+}

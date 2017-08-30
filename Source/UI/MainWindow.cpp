@@ -77,6 +77,8 @@ MainWindow::MainWindow(QWidget* parent)
   labelWidget = new LabelWidget(this);
   connect(this, &MainWindow::channelChanged,
     labelWidget, &LabelWidget::updateChannel);
+  connect(this, &MainWindow::playbackPositionChanged,
+    labelWidget, &LabelWidget::updatePlaybackPosition);
   connect(labelWidget, &LabelWidget::playClicked,
     this, &MainWindow::playClicked);
   connect(labelWidget, &LabelWidget::pauseClicked,
