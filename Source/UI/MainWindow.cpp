@@ -49,6 +49,14 @@ MainWindow::MainWindow(QWidget* parent)
       [this, name]{ emit evaluateDetectorClicked(QString::fromStdString(name)); });
   }
 
+  trainMenu = menuBar()->addMenu(tr("&Train"));
+  for (auto& name : detectorNames)
+  {
+    QAction* action = trainMenu->addAction(QString::fromStdString(name));
+    connect(action, &QAction::triggered, this,
+      [this, name]{ emit trainDetectorClicked(QString::fromStdString(name)); });
+  }
+
   viewMenu = menuBar()->addMenu(tr("&View"));
   connect(viewMenu, &QMenu::aboutToShow, this, &MainWindow::updateViewMenu);
   updateViewMenu();

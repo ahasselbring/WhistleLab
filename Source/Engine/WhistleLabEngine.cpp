@@ -31,6 +31,17 @@ void WhistleLabEngine::evaluateDetector(const QString& name)
   detector->evaluateOnDatabase(sampleDatabase);
 }
 
+void WhistleLabEngine::trainDetector(const QString& name)
+{
+  if (!sampleDatabase.exists)
+  {
+    return;
+  }
+
+  auto detector = WhistleDetectorFactoryBase::make(name.toStdString());
+  detector->trainOnDatabase(sampleDatabase);
+}
+
 void WhistleLabEngine::changeDatabase(const QString& readFileName, const QString& writeFileName)
 {
   if (sampleDatabase.exists && !writeFileName.isEmpty())

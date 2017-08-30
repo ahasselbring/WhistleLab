@@ -51,6 +51,11 @@ signals:
    */
   void evaluateDetectorClicked(const QString& name);
   /**
+   * @brief trainDetectorClicked is emitted when a train button is clicked
+   * @param name the name of the detector that is to be trained
+   */
+  void trainDetectorClicked(const QString& name);
+  /**
    * @brief channelSelected is emitted when a channel is selected
    * @param path the path of the audio file in the sample database
    * @param channel the channel number of the channel in the file
@@ -118,6 +123,8 @@ private:
   QMenu* fileMenu = nullptr;
   /// the menu containing evaluate actions
   QMenu* evaluateMenu = nullptr;
+  /// the menu containing train actions
+  QMenu* trainMenu = nullptr;
   /// the menu containing view actions
   QMenu* viewMenu = nullptr;
   /// the menu containing help actions

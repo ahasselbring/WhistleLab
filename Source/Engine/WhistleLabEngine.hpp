@@ -51,6 +51,11 @@ public slots:
    */
   void evaluateDetector(const QString& name);
   /**
+   * @brief trainDetector trains a detector on the currently opened database
+   * @param name the name of the detector
+   */
+  void trainDetector(const QString& name);
+  /**
    * @brief changeDatabase opens or closes the sample database
    * @param readFileName the name of the new database file or an empty string
    * @param writeFileName the name where the old database is written or an empty string
