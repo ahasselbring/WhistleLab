@@ -63,4 +63,6 @@ private:
   std::vector<double> powerBuffer;
   /// a plan for FFTW for the FFT
   fftw_plan fftPlan;
+  /// whether the detector is in training mode
+  bool training;
 };

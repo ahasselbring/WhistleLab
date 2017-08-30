@@ -17,6 +17,7 @@ AHDetector::AHDetector()
   , complexBuffer(bufferSize / 2 + 1)
   , powerBuffer(bufferSize / 2 + 1)
   , fftPlan(fftw_plan_dft_r2c_1d(bufferSize, realBuffer.data(), reinterpret_cast<fftw_complex*>(complexBuffer.data()), FFTW_ESTIMATE))
+  , training(false)
 {
   static_assert(bufferSize % 2 == 0, "The buffer size has to be even!");
 }
@@ -166,8 +167,11 @@ void AHDetector::evaluate(EvaluationHandle& eh)
   }
 }
 
-void AHDetector::trainOnDatabase(const SampleDatabase&)
+void AHDetector::trainOnDatabase(const SampleDatabase& db)
 {
+  training = true;
+  evaluateOnDatabase(db);
+  training = false;
 }
 
 bool AHDetector::classify(const std::array<double, numOfFeatures>& features) const
