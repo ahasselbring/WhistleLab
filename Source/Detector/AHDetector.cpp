@@ -18,17 +18,36 @@ AHDetector::AHDetector()
   , powerBuffer(bufferSize / 2 + 1)
   , fftPlan(fftw_plan_dft_r2c_1d(bufferSize, realBuffer.data(), reinterpret_cast<fftw_complex*>(complexBuffer.data()), FFTW_ESTIMATE))
   , training(false)
+  , ann(nullptr)
 {
   static_assert(bufferSize % 2 == 0, "The buffer size has to be even!");
+  if (useNN)
+  {
+    ann = fann_create_from_file("NeuralNetworks/AHDetector.net");
+    if (ann == nullptr)
+    {
+      std::cerr << "AHDetector: Could not load neural network!\n";
+    }
+  }
 }
 
 AHDetector::~AHDetector()
 {
+  if (useNN && ann != nullptr)
+  {
+    fann_destroy(ann);
+    ann = nullptr;
+  }
+  assert(ann == nullptr);
   fftw_destroy_plan(fftPlan);
 }
 
 void AHDetector::evaluate(EvaluationHandle& eh)
 {
+  if (useNN && ann == nullptr)
+  {
+    return;
+  }
   std::array<float, bufferSize> samples;
   const std::vector<std::complex<double>>& freqData = complexBuffer;
   const double freqResolution = static_cast<double>(bufferSize) / eh.getSampleRate();
@@ -160,7 +179,8 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     features[3] = (whistlePower[0] + whistlePower[1]) / (stopBandPower[0] + stopBandPower[1]);
 
     // 9. Run classifier.
-    if (classify(features))
+    const bool isWhistle = useNN ? classifyNN(features) : classifyJ48(features);
+    if (isWhistle)
     {
       eh.report(-static_cast<int>(bufferSize) / 2);
     }
@@ -174,7 +194,7 @@ void AHDetector::trainOnDatabase(const SampleDatabase& db)
   training = false;
 }
 
-bool AHDetector::classify(const FeatureVector& features) const
+bool AHDetector::classifyJ48(const FeatureVector& features) const
 {
   if (features[0] <= 1079858)
   {
@@ -188,4 +208,16 @@ bool AHDetector::classify(const FeatureVector& features) const
     return true;
   }
   return false;
+}
+
+bool AHDetector::classifyNN(const FeatureVector& features) const
+{
+  assert(ann != nullptr);
+  fann_type input[numOfFeatures];
+  for (unsigned int i = 0; i < numOfFeatures; i++)
+  {
+    input[i] = features[i];
+  }
+  fann_type* output = fann_run(ann, input);
+  return *output > 0.5;
 }

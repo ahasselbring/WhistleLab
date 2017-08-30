@@ -7,6 +7,8 @@
 #include <array>
 #include <complex>
 
+#include <doublefann.h>
+
 #include <fftw3.h>
 
 #include "WhistleDetector.hpp"
@@ -41,11 +43,19 @@ private:
   static constexpr unsigned int numOfFeatures = 4;
   typedef std::array<double, numOfFeatures> FeatureVector;
   /**
-   * @brief classify determines whether there is a whistle by some features
+   * @brief classifyJ48 determines whether there is a whistle by some features (in this case by a J48-trained decision tree)
    * @param features the features that are available to the classifier
    * @return whether there is a whistle in the features
    */
-  bool classify(const FeatureVector& features) const;
+  bool classifyJ48(const FeatureVector& features) const;
+  /**
+   * @brief classifyNN determines whether there is a whistle by some features (in this case an artificial neural network)
+   * @param features the features that are available to the classifier
+   * @return whether there is a whistle in the features
+   */
+  bool classifyNN(const FeatureVector& features) const;
+  /// whether the artificial neural network should be used for classification (instead of the decision tree)
+  static constexpr bool useNN = false;
   /// the buffer size (a parameter)
   static constexpr unsigned int bufferSize = 4096;
   /// the minimum frequency of the whistle band (a parameter)
@@ -66,4 +76,6 @@ private:
   fftw_plan fftPlan;
   /// whether the detector is in training mode
   bool training;
+  /// the neural network (only if the neural network classifier should be used)
+  fann* ann;
 };
