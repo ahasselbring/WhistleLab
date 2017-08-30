@@ -7,7 +7,7 @@
 #include <array>
 #include <complex>
 
-#include <doublefann.h>
+#include <fann.h>
 
 #include <fftw3.h>
 
@@ -43,6 +43,16 @@ private:
   static constexpr unsigned int numOfFeatures = 4;
   typedef std::array<double, numOfFeatures> FeatureVector;
   /**
+   * @struct TrainingExample contains pairs of input and desired output of the classifier
+   */
+  struct TrainingExample
+  {
+    /// the input of the classifier
+    FeatureVector input;
+    /// the desired output of the classifier
+    bool output;
+  };
+  /**
    * @brief classifyJ48 determines whether there is a whistle by some features (in this case by a J48-trained decision tree)
    * @param features the features that are available to the classifier
    * @return whether there is a whistle in the features
@@ -76,6 +86,8 @@ private:
   fftw_plan fftPlan;
   /// whether the detector is in training mode
   bool training;
+  /// the collected data during training
+  std::vector<TrainingExample> trainingExamples;
   /// the neural network (only if the neural network classifier should be used)
   fann* ann;
 };

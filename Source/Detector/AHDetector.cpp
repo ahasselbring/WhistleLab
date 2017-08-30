@@ -44,7 +44,7 @@ AHDetector::~AHDetector()
 
 void AHDetector::evaluate(EvaluationHandle& eh)
 {
-  if (useNN && ann == nullptr)
+  if (useNN && !training && ann == nullptr)
   {
     return;
   }
@@ -189,9 +189,54 @@ void AHDetector::evaluate(EvaluationHandle& eh)
 
 void AHDetector::trainOnDatabase(const SampleDatabase& db)
 {
+  // 1. Only the neural network can be trained here.
+  if (!useNN)
+  {
+    return;
+  }
+
+  // 2. Evaluate this detector in training mode.
   training = true;
   evaluateOnDatabase(db);
   training = false;
+
+  // 3. Create / overwrite neural network.
+  if (ann != nullptr)
+  {
+    fann_destroy(ann);
+  }
+  ann = fann_create_standard(3, numOfFeatures, 4, 1);
+  if (ann == nullptr)
+  {
+    std::cerr << "AHDetector: Could not create new neural network!\n";
+    trainingExamples.clear();
+    return;
+  }
+  fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
+  fann_set_activation_function_output(ann, FANN_SIGMOID);
+  fann_randomize_weights(ann, -1.0f, 1.0f);
+
+  // 4. Setup data and train the neural network.
+  fann_train_data* data = fann_create_train(static_cast<unsigned int>(trainingExamples.size()), numOfFeatures, 1);
+  if (data == nullptr)
+  {
+    std::cerr << "AHDetector: Could not create train data!\n";
+    trainingExamples.clear();
+    return;
+  }
+  for (unsigned int i = 0; i < trainingExamples.size(); i++)
+  {
+    for (unsigned int j = 0; j < numOfFeatures; j++)
+    {
+      data->input[i][j] = static_cast<float>(trainingExamples[i].input[j]);
+    }
+    data->output[i][0] = trainingExamples[i].output ? 1.0f : 0.0f;
+  }
+  fann_train_on_data(ann, data, 10000, 100, 0.0f);
+  fann_destroy_train(data);
+
+  // 5. Clear the collected training examples.
+  trainingExamples.clear();
 }
 
 bool AHDetector::classifyJ48(const FeatureVector& features) const
@@ -216,8 +261,8 @@ bool AHDetector::classifyNN(const FeatureVector& features) const
   fann_type input[numOfFeatures];
   for (unsigned int i = 0; i < numOfFeatures; i++)
   {
-    input[i] = features[i];
+    input[i] = static_cast<float>(features[i]);
   }
   fann_type* output = fann_run(ann, input);
-  return *output > 0.5;
+  return *output > 0.5f;
 }
