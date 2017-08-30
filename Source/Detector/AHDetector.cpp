@@ -23,7 +23,7 @@ AHDetector::AHDetector()
   static_assert(bufferSize % 2 == 0, "The buffer size has to be even!");
   if (useNN)
   {
-    ann = fann_create_from_file("NeuralNetworks/AHDetector.net");
+    ann = fann_create_from_file("../NeuralNetworks/AHDetector.net");
     if (ann == nullptr)
     {
       std::cerr << "AHDetector: Could not load neural network!\n";
@@ -35,6 +35,7 @@ AHDetector::~AHDetector()
 {
   if (useNN && ann != nullptr)
   {
+    fann_save(ann, "../NeuralNetworks/AHDetector.net");
     fann_destroy(ann);
     ann = nullptr;
   }
@@ -177,6 +178,17 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     features[1] = whistlePower[0] / stopBandPower[0];
     features[2] = whistlePower[1] / stopBandPower[0];
     features[3] = (whistlePower[0] + whistlePower[1]) / (stopBandPower[0] + stopBandPower[1]);
+
+    // 8b. During training, store the feature vector including its annotated result.
+    if (training)
+    {
+      const int label = eh.insideWhistle(-static_cast<int>(bufferSize) / 2);
+      trainingExamples.emplace_back();
+      TrainingExample& te = trainingExamples.back();
+      te.input = features;
+      te.output = (label != 0);
+      continue;
+    }
 
     // 9. Run classifier.
     const bool isWhistle = useNN ? classifyNN(features) : classifyJ48(features);
