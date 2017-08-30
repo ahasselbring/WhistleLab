@@ -39,12 +39,13 @@ public:
 private:
   /// the number of features that are available for the classifier
   static constexpr unsigned int numOfFeatures = 4;
+  typedef std::array<double, numOfFeatures> FeatureVector;
   /**
    * @brief classify determines whether there is a whistle by some features
    * @param features the features that are available to the classifier
    * @return whether there is a whistle in the features
    */
-  bool classify(const std::array<double, numOfFeatures>& features) const;
+  bool classify(const FeatureVector& features) const;
   /// the buffer size (a parameter)
   static constexpr unsigned int bufferSize = 4096;
   /// the minimum frequency of the whistle band (a parameter)

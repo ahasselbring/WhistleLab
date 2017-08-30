@@ -153,7 +153,7 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     stopBandPower[1] /= stopBandRange2;
 
     // 8. Compute feature vector.
-    std::array<double, numOfFeatures> features;
+    FeatureVector features;
     features[0] = maxPower;
     features[1] = whistlePower[0] / stopBandPower[0];
     features[2] = whistlePower[1] / stopBandPower[0];
@@ -174,7 +174,7 @@ void AHDetector::trainOnDatabase(const SampleDatabase& db)
   training = false;
 }
 
-bool AHDetector::classify(const std::array<double, numOfFeatures>& features) const
+bool AHDetector::classify(const FeatureVector& features) const
 {
   if (features[0] <= 1079858)
   {
