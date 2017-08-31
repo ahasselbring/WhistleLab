@@ -64,6 +64,14 @@ private:
    * @return whether there is a whistle in the features
    */
   bool classifyNN(const FeatureVector& features) const;
+  /**
+   * @brief trainJ48 trains a decision tree
+   */
+  void trainJ48();
+  /**
+   * @brief trainNN trains a neural network
+   */
+  void trainNN();
   /// whether the artificial neural network should be used for classification (instead of the decision tree)
   static constexpr bool useNN = false;
   /// the buffer size (a parameter)
