@@ -68,7 +68,7 @@ void BembelbotsDetector::evaluate(EvaluationHandle& eh)
       {
         if (match.lengthMs > minSignalLengthMs && match.maxVolumeDb > volumeThresholdDb)
         {
-          eh.report(-static_cast<int>(match.lengthMs * eh.getSampleRate() / 1000) / 2);
+          eh.report(-static_cast<int>(match.lengthMs * eh.getSampleRate() / 1000) + bufferSize);
         }
         match.available = false;
       }
