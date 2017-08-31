@@ -75,11 +75,11 @@ private:
   /// whether the artificial neural network should be used for classification (instead of the decision tree)
   static constexpr bool useNN = false;
   /// the buffer size (a parameter)
-  static constexpr unsigned int bufferSize = 4096;
+  static constexpr unsigned int bufferSize = 2048;
   /// the minimum frequency of the whistle band (a parameter)
   static constexpr double minFrequency = 2000;
   /// the maximum frequency of the whistle band (a parameter)
-  static constexpr double maxFrequency = 5000;
+  static constexpr double maxFrequency = 4000;
   /// the minimum power for the fundamental whistle frequency
   static constexpr double minRequiredPower = 117965;
   /// the minimum factor the power may be below the maximum power before ending boundary search
