@@ -32,6 +32,8 @@ set(SOURCES
   Source/Engine/AudioChannel.hpp
   Source/Engine/AudioFile.cpp
   Source/Engine/AudioFile.hpp
+  Source/Engine/EvaluationResults.cpp
+  Source/Engine/EvaluationResults.hpp
   Source/Engine/SampleDatabase.cpp
   Source/Engine/SampleDatabase.hpp
   Source/Engine/WhistleLabel.cpp

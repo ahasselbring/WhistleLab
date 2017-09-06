@@ -6,6 +6,7 @@
 
 #include <vector>
 
+#include "Engine/EvaluationResults.hpp"
 #include "Engine/SampleDatabase.hpp"
 
 #include "EvaluationHandle.hpp"
@@ -34,6 +35,7 @@ public:
   /**
    * @brief evaluateOnDatabase evaluates a detector on a given database
    * @param db the database on which the detector is evaluated
+   * @param results is filled with the results of the evaluation
    */
-  virtual void evaluateOnDatabase(const SampleDatabase& db);
+  virtual void evaluateOnDatabase(const SampleDatabase& db, EvaluationResults* results = nullptr);
 };
