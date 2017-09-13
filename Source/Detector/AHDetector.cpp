@@ -197,7 +197,7 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     // 6. Determine power in the rest the second harmonic band and in between and above.
     const int minFreqIndex2 = 2 * maxPowerFreqIndex - (upperBound - lowerBound) / 4;
     const int maxFreqIndex2 = 2 * maxPowerFreqIndex + (upperBound - lowerBound) / 4;
-    assert(minFreqIndex2 >= 0 && maxFreqIndex2 <= freqData.size());
+    assert(minFreqIndex2 >= 0 && maxFreqIndex2 <= static_cast<int>(freqData.size()));
     for (int i = upperBound; i < minFreqIndex2; i++)
     {
       stopBandPower[0] += powerBuffer[i];
