@@ -2,6 +2,7 @@
  * @file WhistleDetectorBase.cpp implements methods shared among detectors
  */
 
+#include <cassert>
 #include <iostream>
 
 #include "WhistleDetectorBase.hpp"
@@ -18,10 +19,13 @@ void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db, Evaluatio
     {
       continue;
     }
+    assert(eh.detections.size() == eh.detectionPositions.size());
     std::vector<unsigned int> labelHits(file.channels[0].whistleLabels.size(), 0);
+    std::vector<unsigned int> labelDelays(file.channels[0].whistleLabels.size(), std::numeric_limits<unsigned int>::max());
     unsigned int lastFP = 0;
-    for (auto pos : eh.detections)
+    for (unsigned int j = 0; j < eh.detections.size(); j++)
     {
+      const unsigned int pos = eh.detections[j];
       bool hit = false;
       for (int i = 0; i < file.channels[0].whistleLabels.size(); i++)
       {
@@ -29,6 +33,9 @@ void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db, Evaluatio
         if (static_cast<unsigned int>(wl.start) < pos && pos < static_cast<unsigned int>(wl.end))
         {
           labelHits[i]++;
+          // The detection cannot be made when the detector hasn't even read any of the data containing the whistle.
+          assert(eh.detectionPositions[j] >= wl.start);
+          labelDelays[i] = std::min(labelDelays[i], eh.detectionPositions[j] - wl.start);
           hit = true;
           break;
         }
@@ -50,6 +57,7 @@ void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db, Evaluatio
       if (labelHits[i])
       {
         results->truePositives++;
+        results->averageDelay += static_cast<float>(labelDelays[i]) / static_cast<float>(file.sampleRate);
       }
       std::cout << "Whistle in " << file.path.toStdString() << " at " << file.channels[0].whistleLabels[i].start
                 << " (i.e. "
@@ -60,8 +68,13 @@ void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db, Evaluatio
   }
   if (results != nullptr)
   {
+    if (results->truePositives != 0)
+    {
+      results->averageDelay /= static_cast<float>(results->truePositives);
+    }
     std::cout << "False Detections: " << results->falsePositives << '\n';
     std::cout << "True Detections: " << results->truePositives << '/' << results->positives << '\n';
+    std::cout << "Average Delay: " << results->averageDelay << "s\n";
   }
 }
 

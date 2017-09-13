@@ -35,6 +35,7 @@ unsigned int EvaluationHandle::readSingleChannel(float* buf, unsigned int length
 
 void EvaluationHandle::report(int offset)
 {
+  detectionPositions.push_back(pos);
   detections.push_back(pos + offset);
 }
 

@@ -55,5 +55,7 @@ private:
   unsigned int pos = 0;
   /// the vector that is filled with detections made by the detector
   std::vector<unsigned int> detections;
+  /// the vector that is filled with the time points when the detection is made
+  std::vector<unsigned int> detectionPositions;
   friend class WhistleDetectorBase;
 };

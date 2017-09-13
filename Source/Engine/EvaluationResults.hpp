@@ -21,4 +21,6 @@ public:
   unsigned int truePositives = 0;
   /// the number of detections that could not be matched with a labeled whistle
   unsigned int falsePositives = 0;
+  /// the average delay from begin of the label to first report
+  float averageDelay = 0.f;
 };
