@@ -98,4 +98,8 @@ private:
   std::vector<TrainingExample> trainingExamples;
   /// the neural network (only if the neural network classifier should be used)
   fann* ann;
+  /// the means of the features
+  FeatureVector means;
+  /// the standard deviations of the features
+  FeatureVector stddevs;
 };

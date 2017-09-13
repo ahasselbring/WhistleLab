@@ -35,6 +35,34 @@ AHDetector::AHDetector()
       fann_destroy(ann);
       ann = nullptr;
     }
+    else
+    {
+      std::ifstream norm("../NeuralNetworks/AHDetector.norm");
+      if (norm.is_open())
+      {
+        for (unsigned int i = 0; i < numOfFeatures; i++)
+        {
+          norm >> means[i] >> stddevs[i];
+          if (!norm.good())
+          {
+            break;
+          }
+        }
+        if (!norm.good())
+        {
+          std::cerr << "AHDetector: Could not load normalization parameters!\n";
+          fann_destroy(ann);
+          ann = nullptr;
+        }
+        norm.close();
+      }
+      else
+      {
+        std::cerr << "AHDetector: Could not load normalization parameters!\n";
+        fann_destroy(ann);
+        ann = nullptr;
+      }
+    }
   }
 }
 
@@ -45,6 +73,20 @@ AHDetector::~AHDetector()
     fann_save(ann, "../NeuralNetworks/AHDetector.net");
     fann_destroy(ann);
     ann = nullptr;
+
+    std::ofstream norm("../NeuralNetworks/AHDetector.norm");
+    if (norm.is_open())
+    {
+      for (unsigned int i = 0; i < numOfFeatures; i++)
+      {
+        norm << means[i] << ' ' << stddevs[i] << '\n';
+      }
+      norm.close();
+    }
+    else
+    {
+      std::cerr << "AHDetector: Could not save normalization parameters!\n";
+    }
   }
   assert(ann == nullptr);
   fftw_destroy_plan(fftPlan);
@@ -249,7 +291,7 @@ bool AHDetector::classifyNN(const FeatureVector& features) const
   fann_type input[numOfFeatures];
   for (unsigned int i = 0; i < numOfFeatures; i++)
   {
-    input[i] = static_cast<float>(features[i]);
+    input[i] = static_cast<float>((features[i] - means[i]) / stddevs[i]);
   }
   fann_type* output = fann_run(ann, input);
   return *output > 0.5f;
@@ -281,7 +323,33 @@ void AHDetector::trainJ48()
 
 void AHDetector::trainNN()
 {
-  // 1. Create / overwrite neural network.
+  // 1. Find out mean and standard deviation of the features.
+  means.fill(0);
+  stddevs.fill(0);
+  for (auto& te : trainingExamples)
+  {
+    for (unsigned int i = 0; i < numOfFeatures; i++)
+    {
+      means[i] += te.input[i];
+    }
+  }
+  for (unsigned int i = 0; i < numOfFeatures; i++)
+  {
+    means[i] /= static_cast<double>(trainingExamples.size());
+  }
+  for (auto& te : trainingExamples)
+  {
+    for (unsigned int i = 0; i < numOfFeatures; i++)
+    {
+      stddevs[i] += (te.input[i] - means[i]) * (te.input[i] - means[i]);
+    }
+  }
+  for (unsigned int i = 0; i < numOfFeatures; i++)
+  {
+    stddevs[i] = std::sqrt(stddevs[i] / static_cast<double>(trainingExamples.size()));
+  }
+
+  // 2. Create / overwrite neural network.
   if (ann != nullptr)
   {
     fann_destroy(ann);
@@ -307,7 +375,7 @@ void AHDetector::trainNN()
   {
     for (unsigned int j = 0; j < numOfFeatures; j++)
     {
-      data->input[i][j] = static_cast<float>(trainingExamples[i].input[j]);
+      data->input[i][j] = static_cast<float>((trainingExamples[i].input[j] - means[j]) / stddevs[j]);
     }
     data->output[i][0] = trainingExamples[i].output ? 1.0f : 0.0f;
   }
