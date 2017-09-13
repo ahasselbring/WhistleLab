@@ -73,7 +73,7 @@ private:
    */
   void trainNN();
   /// whether the artificial neural network should be used for classification (instead of the decision tree)
-  static constexpr bool useNN = false;
+  static constexpr bool useNN = true;
   /// the buffer size (a parameter)
   static constexpr unsigned int bufferSize = 2048;
   /// the minimum frequency of the whistle band (a parameter)
