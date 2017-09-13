@@ -9,6 +9,7 @@
 #include <QStringList>
 
 
+class EvaluationResults;
 class LabelWidget;
 class SampleDatabaseWidget;
 class QAction;
@@ -79,6 +80,11 @@ signals:
    * @brief pauseClicked is emitted when the pause button is clicked
    */
   void pauseClicked();
+  /**
+   * @brief evaluationDone is emitted when the evaluation of a detector is done
+   * @param results the results of the evaluation
+   */
+  void evaluationDone(const EvaluationResults& results);
 private slots:
   /**
    * @brief about shows a message box with information about this program

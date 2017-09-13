@@ -13,6 +13,7 @@
 #include "Engine/SampleDatabase.hpp"
 
 
+class EvaluationResults;
 class QAudioOutput;
 class QString;
 
@@ -44,6 +45,11 @@ signals:
    * @param pos the new playback position in samples since the beginning of the file
    */
   void playbackPositionChanged(const unsigned int pos);
+  /**
+   * @brief evaluationDone is emitted when the evaluation of a detector is done
+   * @param results the results of the evaluation
+   */
+  void evaluationDone(const EvaluationResults& results);
 public slots:
   /**
    * @brief evaluateDetector evaluates a detector on the currently opened database

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <QMetaType>
+
 
 /**
  * @class EvaluationResults collects results of the evaluation of a detector
@@ -24,3 +26,5 @@ public:
   /// the average delay from begin of the label to first report
   float averageDelay = 0.f;
 };
+
+Q_DECLARE_METATYPE(EvaluationResults)

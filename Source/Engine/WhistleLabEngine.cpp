@@ -30,6 +30,7 @@ void WhistleLabEngine::evaluateDetector(const QString& name)
   auto detector = WhistleDetectorFactoryBase::make(name.toStdString());
   EvaluationResults results;
   detector->evaluateOnDatabase(sampleDatabase, &results);
+  emit evaluationDone(results);
 }
 
 void WhistleLabEngine::trainDetector(const QString& name)
