@@ -29,6 +29,12 @@ AHDetector::AHDetector()
     {
       std::cerr << "AHDetector: Could not load neural network!\n";
     }
+    else if (fann_get_num_input(ann) != numOfFeatures || fann_get_num_output(ann) != 1)
+    {
+      std::cerr << "AHDetector: Loaded neural network topology is not compatible!\n";
+      fann_destroy(ann);
+      ann = nullptr;
+    }
   }
 }
 
