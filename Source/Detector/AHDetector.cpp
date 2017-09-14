@@ -16,7 +16,7 @@
 AHDetector::AHDetector()
   : realBuffer(bufferSize)
   , complexBuffer(bufferSize / 2 + 1)
-  , powerBuffer(bufferSize / 2 + 1)
+  , amplitudeBuffer(bufferSize / 2 + 1)
   , fftPlan(fftw_plan_dft_r2c_1d(bufferSize, realBuffer.data(), reinterpret_cast<fftw_complex*>(complexBuffer.data()), FFTW_ESTIMATE))
   , training(false)
   , ann(nullptr)
@@ -119,51 +119,51 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     }
     fftw_execute(fftPlan);
 
-    // 2. Precompute the absolute values (hopefully) normalized by buffer size and sample rate.
+    // 2. Precompute the absolute values of the spectrum (normalized by buffer size).
     for (unsigned int i = 0; i < freqData.size(); i++)
     {
-      powerBuffer[i] = (freqData[i].real() * freqData[i].real() + freqData[i].imag() * freqData[i].imag()) / freqResolution;
+      amplitudeBuffer[i] = std::abs(freqData[i]) / (bufferSize / 2);
     }
 
-    // 3. Find the frequency at which the power is highest in a configurable band.
-    double maxPower = minRequiredPower;
-    unsigned int maxPowerFreqIndex = 0;
+    // 3. Find the frequency at which the amplitude is highest in a configurable band.
+    double maxAmplitude = minRequiredAmplitude;
+    unsigned int maxAmplitudeFreqIndex = 0;
     for (unsigned int i = minFreqIndex; i < maxFreqIndex; i++)
     {
-      const double abs2 = powerBuffer[i];
-      if (abs2 > maxPower)
+      const double amplitude = amplitudeBuffer[i];
+      if (amplitude > maxAmplitude)
       {
-        maxPower = abs2;
-        maxPowerFreqIndex = i;
+        maxAmplitude = amplitude;
+        maxAmplitudeFreqIndex = i;
       }
     }
 
-    // 4. If a configurable power has not been surpassed, the buffer is rejected.
-    if (maxPowerFreqIndex == 0)
+    // 4. If a configurable amplitude has not been surpassed, the buffer is rejected.
+    if (maxAmplitudeFreqIndex == 0)
     {
       continue;
     }
 
     // 5. Determine power in the range of the base frequency while detecting its boundaries.
-    double whistlePower[2] = { powerBuffer[maxPowerFreqIndex], 0 };
+    double whistlePower[2] = { amplitudeBuffer[maxAmplitudeFreqIndex], 0 };
     double stopBandPower[2] = { 0, 0 };
     const unsigned int i2 = (maxFreqIndex - minFreqIndex) / 2;
-    const unsigned int lowerBoundLowerBound = std::max(maxPowerFreqIndex - i2, 1U);
-    const unsigned int upperBoundUpperBound = std::min(maxPowerFreqIndex + i2, static_cast<unsigned int>(freqData.size()));
+    const unsigned int lowerBoundLowerBound = std::max(maxAmplitudeFreqIndex - i2, 1U);
+    const unsigned int upperBoundUpperBound = std::min(maxAmplitudeFreqIndex + i2, static_cast<unsigned int>(freqData.size()));
     unsigned int upperBound, lowerBound;
     unsigned int lowerBoundAtMinLowerPower = 0, upperBoundAtMinUpperPower = 0;
     double minLowerPower = std::numeric_limits<double>::max(), minUpperPower = std::numeric_limits<double>::max();
     double whistlePowerAtMinLowerPower = 0.f, whistlePowerAtMinUpperPower = 0.f;
-    for (lowerBound = maxPowerFreqIndex - 1; lowerBound > lowerBoundLowerBound; lowerBound--)
+    for (lowerBound = maxAmplitudeFreqIndex - 1; lowerBound > lowerBoundLowerBound; lowerBound--)
     {
-      whistlePower[0] += powerBuffer[lowerBound];
-      if (powerBuffer[lowerBound] < maxPower * minPowerOverMaxPower)
+      whistlePower[0] += amplitudeBuffer[lowerBound];
+      if (amplitudeBuffer[lowerBound] < maxAmplitude * minAmplitudeOverMaxAmplitude)
       {
         break;
       }
-      if (powerBuffer[lowerBound] < minLowerPower)
+      if (amplitudeBuffer[lowerBound] < minLowerPower)
       {
-        minLowerPower = powerBuffer[lowerBound];
+        minLowerPower = amplitudeBuffer[lowerBound];
         lowerBoundAtMinLowerPower = lowerBound;
         whistlePowerAtMinLowerPower = whistlePower[0];
       }
@@ -173,16 +173,16 @@ void AHDetector::evaluate(EvaluationHandle& eh)
       lowerBound = lowerBoundAtMinLowerPower;
       whistlePower[0] = whistlePowerAtMinLowerPower;
     }
-    for (upperBound = maxPowerFreqIndex + 1; upperBound < upperBoundUpperBound; upperBound++)
+    for (upperBound = maxAmplitudeFreqIndex + 1; upperBound < upperBoundUpperBound; upperBound++)
     {
-      whistlePower[0] += powerBuffer[upperBound];
-      if (powerBuffer[upperBound] < maxPower * minPowerOverMaxPower)
+      whistlePower[0] += amplitudeBuffer[upperBound];
+      if (amplitudeBuffer[upperBound] < maxAmplitude * minAmplitudeOverMaxAmplitude)
       {
         break;
       }
-      if (powerBuffer[upperBound] < minUpperPower)
+      if (amplitudeBuffer[upperBound] < minUpperPower)
       {
-        minUpperPower = powerBuffer[upperBound];
+        minUpperPower = amplitudeBuffer[upperBound];
         upperBoundAtMinUpperPower = upperBound;
         whistlePowerAtMinUpperPower = whistlePower[0];
       }
@@ -195,20 +195,20 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     assert(upperBound > lowerBound);
 
     // 6. Determine power in the rest the second harmonic band and in between and above.
-    const int minFreqIndex2 = 2 * maxPowerFreqIndex - (upperBound - lowerBound) / 4;
-    const int maxFreqIndex2 = 2 * maxPowerFreqIndex + (upperBound - lowerBound) / 4;
+    const int minFreqIndex2 = 2 * maxAmplitudeFreqIndex - (upperBound - lowerBound) / 4;
+    const int maxFreqIndex2 = 2 * maxAmplitudeFreqIndex + (upperBound - lowerBound) / 4;
     assert(minFreqIndex2 >= 0 && maxFreqIndex2 <= static_cast<int>(freqData.size()));
     for (int i = upperBound; i < minFreqIndex2; i++)
     {
-      stopBandPower[0] += powerBuffer[i];
+      stopBandPower[0] += amplitudeBuffer[i];
     }
     for (int i = minFreqIndex2; i < maxFreqIndex2; i++)
     {
-      whistlePower[1] += powerBuffer[i];
+      whistlePower[1] += amplitudeBuffer[i];
     }
     for (int i = maxFreqIndex2; i < static_cast<int>(freqData.size()); i++)
     {
-      stopBandPower[1] += powerBuffer[i];
+      stopBandPower[1] += amplitudeBuffer[i];
     }
 
     // 7. Normalize the power to their ranges.
@@ -223,7 +223,7 @@ void AHDetector::evaluate(EvaluationHandle& eh)
 
     // 8. Compute feature vector.
     FeatureVector features;
-    features[0] = maxPower;
+    features[0] = maxAmplitude;
     features[1] = whistlePower[0] / stopBandPower[0];
     features[2] = whistlePower[1] / stopBandPower[0];
     features[3] = (whistlePower[0] + whistlePower[1]) / (stopBandPower[0] + stopBandPower[1]);

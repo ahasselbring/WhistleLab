@@ -80,16 +80,16 @@ private:
   static constexpr double minFrequency = 2000;
   /// the maximum frequency of the whistle band (a parameter)
   static constexpr double maxFrequency = 4000;
-  /// the minimum power for the fundamental whistle frequency
-  static constexpr double minRequiredPower = 117965;
-  /// the minimum factor the power may be below the maximum power before ending boundary search
-  static constexpr double minPowerOverMaxPower = 0.01;
+  /// the minimum amplitude for the fundamental whistle frequency
+  static constexpr double minRequiredAmplitude = 0.05;
+  /// the minimum factor the amplitude may be below the maximum amplitude before ending boundary search
+  static constexpr double minAmplitudeOverMaxAmplitude = 0.01;
   /// a buffer for the real input of the FFT
   std::vector<double> realBuffer;
   /// a buffer for the complex output of the FFT
   std::vector<std::complex<double>> complexBuffer;
-  /// a buffer for the power at each frequency
-  std::vector<double> powerBuffer;
+  /// a buffer for the amplitude at each frequency
+  std::vector<double> amplitudeBuffer;
   /// a plan for FFTW for the FFT
   fftw_plan fftPlan;
   /// whether the detector is in training mode
