@@ -271,16 +271,28 @@ void AHDetector::trainOnDatabase(const SampleDatabase& db)
 
 bool AHDetector::classifyJ48(const FeatureVector& features) const
 {
-  if (features[0] <= 1079858)
+  // C5.0 generated decision tree
+  if (features[1] <= 6.55235)
   {
-    if (features[3] <= 332.149 && features[2] > 2.99929)
-    {
-      return true;
-    }
+    return false;
   }
   else
   {
-    return true;
+    if (features[1] <= 12.456)
+    {
+      return false;
+    }
+    else
+    {
+      if (features[0] <= 0.107584)
+      {
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    }
   }
   return false;
 }
