@@ -299,26 +299,66 @@ bool AHDetector::classifyNN(const FeatureVector& features) const
 
 void AHDetector::trainJ48()
 {
-  std::ofstream f("../DecisionTrees/AHDetector.csv");
-  if (!f.is_open())
+  std::ofstream csv("../DecisionTrees/AHDetector.csv");
+  if (!csv.is_open())
   {
     std::cerr << "AHDetector: Could not open CSV file for writing!\n";
     return;
   }
   for (unsigned int i = 0; i < numOfFeatures; i++)
   {
-    f << "feature" << i << ',';
+    csv << "feature" << i << ',';
   }
-  f << "whistle\n";
+  csv << "whistle\n";
   for (auto& te : trainingExamples)
   {
     for (unsigned int i = 0; i < numOfFeatures; i++)
     {
-      f << te.input[i] << ',';
+      csv << te.input[i] << ',';
     }
-    f << (te.output ? "YES" : "NO") << '\n';
+    csv << (te.output ? "YES" : "NO") << '\n';
   }
-  f.close();
+  csv.close();
+
+  std::ofstream names("../DecisionTrees/AHDetector.names");
+  if (!names.is_open())
+  {
+    std::cerr << "AHDetector: Could not open C5.0 names file for writing!\n";
+    return;
+  }
+  names << "whistle.\n";
+  for (unsigned int i = 0; i < numOfFeatures; i++)
+  {
+    names << "feature" << i << ": continuous.\n";
+  }
+  names << "whistle: YES, NO.\n";
+  names.close();
+
+  std::ofstream data("../DecisionTrees/AHDetector.data");
+  if (!data.is_open())
+  {
+    std::cerr << "AHDetector: Could not open C5.0 data file for writing!\n";
+    return;
+  }
+  for (auto& te : trainingExamples)
+  {
+    for (unsigned int i = 0; i < numOfFeatures; i++)
+    {
+      data << te.input[i] << ',';
+    }
+    data << (te.output ? "YES" : "NO") << '\n';
+  }
+  data.close();
+
+  std::ofstream costs("../DecisionTrees/AHDetector.costs");
+  if (!costs.is_open())
+  {
+    std::cerr << "AHDetector: Could not open C5.0 costs file for writing!\n";
+    return;
+  }
+  costs << "YES, NO: 10\n";
+  costs << "NO, YES: 1\n";
+  costs.close();
 }
 
 void AHDetector::trainNN()
