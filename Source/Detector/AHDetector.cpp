@@ -306,7 +306,7 @@ bool AHDetector::classifyNN(const FeatureVector& features) const
     input[i] = static_cast<float>((features[i] - means[i]) / stddevs[i]);
   }
   fann_type* output = fann_run(ann, input);
-  return *output > 0.5f;
+  return *output > 0.9f;
 }
 
 void AHDetector::trainJ48()
