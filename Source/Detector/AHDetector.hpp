@@ -40,7 +40,7 @@ public:
   void trainOnDatabase(const SampleDatabase& db) override;
 private:
   /// the number of features that are available for the classifier
-  static constexpr unsigned int numOfFeatures = 4;
+  static constexpr unsigned int numOfFeatures = 6;
   typedef std::array<double, numOfFeatures> FeatureVector;
   /**
    * @struct TrainingExample contains pairs of input and desired output of the classifier

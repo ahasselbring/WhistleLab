@@ -227,6 +227,8 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     features[1] = whistlePower[0] / stopBandPower[0];
     features[2] = whistlePower[1] / stopBandPower[0];
     features[3] = (whistlePower[0] + whistlePower[1]) / (stopBandPower[0] + stopBandPower[1]);
+    features[4] = stopBandPower[0] / stopBandPower[1];
+    features[5] = whistlePower[0] / whistlePower[1];
 
     // 8b. During training, store the feature vector including its annotated result.
     if (training)
