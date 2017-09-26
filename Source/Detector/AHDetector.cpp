@@ -408,7 +408,7 @@ void AHDetector::trainNN()
   {
     fann_destroy(ann);
   }
-  ann = fann_create_standard(3, numOfFeatures, 4, 1);
+  ann = fann_create_standard(3, numOfFeatures, 8, 1);
   if (ann == nullptr)
   {
     std::cerr << "AHDetector: Could not create new neural network!\n";
