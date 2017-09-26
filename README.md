@@ -13,7 +13,7 @@
 ```bash
 mkdir Build
 cd Build
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j9
 ```
 
