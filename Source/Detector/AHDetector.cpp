@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <random>
 
 #include "AHDetector.hpp"
 
@@ -418,21 +419,41 @@ void AHDetector::trainNN()
   fann_set_activation_function_output(ann, FANN_SIGMOID);
   fann_randomize_weights(ann, -1.0f, 1.0f);
 
-  // 3. Setup data and train the neural network.
-  fann_train_data* data = fann_create_train(static_cast<unsigned int>(trainingExamples.size()), numOfFeatures, 1);
+  // 3. Shuffle training examples to create a diverse but balanced training set.
+  std::vector<TrainingExample*> positives, negatives;
+  for (unsigned int i = 0; i < trainingExamples.size(); i++)
+  {
+    if (trainingExamples[i].output)
+    {
+      positives.push_back(&trainingExamples[i]);
+    }
+    else
+    {
+      negatives.push_back(&trainingExamples[i]);
+    }
+  }
+  std::random_device rd;
+  std::mt19937 g(rd());
+  std::shuffle(positives.begin(), positives.end(), g);
+  std::shuffle(negatives.begin(), negatives.end(), g);
+  const unsigned int numOfTrainingExamples = 2 * static_cast<unsigned int>(std::min(positives.size(), negatives.size()));
+  // 4. Setup data and train the neural network.
+  std::cout << "AHDetector: Will train with " << numOfTrainingExamples << " training examples!\n";
+  fann_train_data* data = fann_create_train(numOfTrainingExamples, numOfFeatures, 1);
   if (data == nullptr)
   {
     std::cerr << "AHDetector: Could not create train data!\n";
     return;
   }
-  for (unsigned int i = 0; i < trainingExamples.size(); i++)
+  for (unsigned int i = 0; i < numOfTrainingExamples; i++)
   {
+    TrainingExample* ex = (i < (numOfTrainingExamples / 2)) ? negatives[i] : positives[i - numOfTrainingExamples / 2];
     for (unsigned int j = 0; j < numOfFeatures; j++)
     {
-      data->input[i][j] = static_cast<float>((trainingExamples[i].input[j] - means[j]) / stddevs[j]);
+      data->input[i][j] = static_cast<float>((ex->input[j] - means[j]) / stddevs[j]);
     }
-    data->output[i][0] = trainingExamples[i].output ? 1.0f : 0.0f;
+    data->output[i][0] = ex->output ? 1.0f : 0.0f;
   }
-  fann_train_on_data(ann, data, 10000, 100, 0.0f);
+  fann_train_on_data(ann, data, 10000, 1000, 0.0f);
   fann_destroy_train(data);
 }
