@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 #include "Engine/AudioFile.hpp"
@@ -49,6 +50,11 @@ public:
    */
   int insideWhistle(int offset = 0) const;
 private:
+  /**
+   * @brief getCurrentThreadTime returns the current thread local time
+   * @return the current thread time in nanoseconds since whatever
+   */
+  static std::uint64_t getCurrentThreadTime();
   /// the audio file on which the detector is evaluated
   const AudioFile& af;
   /// the current reading position
@@ -57,5 +63,9 @@ private:
   std::vector<unsigned int> detections;
   /// the vector that is filled with the time points when the detection is made
   std::vector<unsigned int> detectionPositions;
+  /// the execution times per buffer
+  std::vector<float> executionTimes;
+  /// the time when the last read method returned
+  std::uint64_t timeWhenLastRead = 0;
   friend class WhistleDetectorBase;
 };
