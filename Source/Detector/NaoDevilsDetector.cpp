@@ -95,26 +95,26 @@ void NaoDevilsDetector::evaluate(EvaluationHandle& eh)
         }
         if (amplitudes[peak2Pos] >= overtoneMinAmp2)
         {
-          attackCount++;
-          if (attackCount >= attack)
-          {
-            detected = true;
-          }
+          detected = true;
         }
       }
     }
     if (detected)
     {
+      attackCount++;
       releaseCount = 0;
-      eh.report(-static_cast<int>(windowSize) / 2);
+      if (attackCount >= attack)
+      {
+        eh.report(-static_cast<int>(windowSize) / 2);
+      }
     }
     else if (releaseCount < release)
     {
       releaseCount++;
-      // The following line is not present in the original Nao Devils code.
-      // They would reset attackCount only when not in the SET state (I think that is a bug in their code).
+    }
+    else
+    {
       attackCount = 0;
-      eh.report(-static_cast<int>(windowSize) / 2);
     }
   }
 }
