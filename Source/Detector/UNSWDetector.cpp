@@ -70,30 +70,40 @@ void UNSWDetector::WhistleState::interrogate(const std::vector<std::complex<floa
     spectrumStDev += (spectrum[i] - spectrumMean) * (spectrum[i] - spectrumMean);
   }
   spectrumStDev = std::sqrt(spectrumStDev / static_cast<float>(spectrum.size()));
-  // Add current measurements to history (needed for 2015 detector).
-  statsMemory.push_back({spectrumMean, spectrumStDev});
-  if (statsMemory.size() > statsRemember)
+  // Find the threshold which must be surpassed by the sum of the amplitudes in the whistle band.
+  float whistleThreshold;
+  if (use2016Version)
   {
-    statsMemory.pop_front();
+    whistleThreshold = spectrumMean + spectrumThreshold * spectrumStDev;
   }
   else
   {
-    return;
+    // Add current measurements to history (needed for 2015 detector).
+    statsMemory.push_back({ spectrumMean, spectrumStDev });
+    if (statsMemory.size() > statsRemember)
+    {
+      statsMemory.pop_front();
+    }
+    else
+    {
+      return;
+    }
+    // Find median of means and standard deviations of history.
+    std::vector<float> means(statsRemember), devs(statsRemember);
+    for (unsigned int i = 0; i < statsRemember; i++)
+    {
+      means[i] = statsMemory[i].mean;
+      devs[i] = statsMemory[i].stDev;
+    }
+    std::sort(means.begin(), means.end());
+    std::sort(devs.begin(), devs.end());
+    const float lastSecondMean = (statsRemember % 2) ? means[statsRemember / 2] : (
+      (means[statsRemember / 2 - 1] + means[statsRemember / 2]) * 0.5f);
+    const float lastSecondStDev = (statsRemember % 2) ? devs[statsRemember / 2] : (
+      (devs[statsRemember / 2 - 1] + devs[statsRemember / 2]) * 0.5f);
+    whistleThreshold = std::max(spectrumMean + spectrumThreshold * spectrumStDev,
+    lastSecondMean + temporalMediansThreshold * lastSecondStDev);
   }
-  // Find median of means and standard deviations of history.
-  std::vector<float> means(statsRemember), devs(statsRemember);
-  for (unsigned int i = 0; i < statsRemember; i++)
-  {
-    means[i] = statsMemory[i].mean;
-    devs[i] = statsMemory[i].stDev;
-  }
-  std::sort(means.begin(), means.end());
-  std::sort(devs.begin(), devs.end());
-  const float lastSecondMean = (statsRemember % 2) ? means[statsRemember / 2] : ((means[statsRemember / 2 - 1] + means[statsRemember / 2]) * 0.5f);
-  const float lastSecondStDev = (statsRemember % 2) ? devs[statsRemember / 2] : ((devs[statsRemember / 2 - 1] + devs[statsRemember / 2]) * 0.5f);
-  // Find the threshold which must be surpassed by the sum of the amplitudes in the whistle band.
-  const float whistleThreshold = std::max(spectrumMean + spectrumThreshold * spectrumStDev,
-    use2016Version ? 0.f : (lastSecondMean + temporalMediansThreshold * lastSecondStDev));
   // Grow background zones which are discarded from the whistle band.
   unsigned int begin = spectrumWhistleBegin;
   unsigned int end = spectrumWhistleEnd;
