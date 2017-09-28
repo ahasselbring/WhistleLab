@@ -109,12 +109,12 @@ void WhistleDetectorBase::evaluateOnDatabase(const SampleDatabase& db, Evaluatio
     }
     std::cout << "False Detections: " << results->falsePositives << '\n';
     std::cout << "True Detections: " << results->truePositives << '/' << results->positives << '\n';
-    std::cout << "Maximum Delay: " << results->maximumDelay << "s\n";
     std::cout << "Minimum Delay: " << results->minimumDelay << "s\n";
     std::cout << "Average Delay: " << results->averageDelay << "s\n";
-    std::cout << "Maximum execution time ratio: " << results->maximumExecutionTimePerTime << '\n';
+    std::cout << "Maximum Delay: " << results->maximumDelay << "s\n";
     std::cout << "Minimum execution time ratio: " << results->minimumExecutionTimePerTime << '\n';
     std::cout << "Average execution time ratio: " << results->averageExecutionTimePerTime << '\n';
+    std::cout << "Maximum execution time ratio: " << results->maximumExecutionTimePerTime << '\n';
   }
 }
 
