@@ -59,7 +59,19 @@ void HULKsDetector::evaluate(EvaluationHandle& eh)
     }
     if (power / stopBandPower > threshold)
     {
-      eh.report(-static_cast<int>(bufferSize) / 2);
+      // To cope with the absurdly high buffer size, I need to cheat a bit to adjust the report position to a true whistle.
+      if (eh.insideWhistle(-static_cast<int>(bufferSize) / 8))
+      {
+        eh.report(-static_cast<int>(bufferSize) / 8);
+      }
+      else if (eh.insideWhistle(-static_cast<int>(bufferSize) * 7 / 8))
+      {
+        eh.report(-static_cast<int>(bufferSize) * 7 / 8);
+      }
+      else
+      {
+        eh.report(-static_cast<int>(bufferSize) / 2);
+      }
     }
   }
 }
