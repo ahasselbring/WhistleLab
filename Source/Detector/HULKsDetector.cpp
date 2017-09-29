@@ -28,8 +28,6 @@ void HULKsDetector::evaluate(EvaluationHandle& eh)
   std::array<float, bufferSize> samples;
   const std::vector<std::complex<double>>& freqData = complexBuffer;
   const double freqResolution = static_cast<double>(bufferSize) / eh.getSampleRate();
-  const double whistleBandRange = maxFrequency - minFrequency;
-  const double stopBandRange = static_cast<double>(eh.getSampleRate() / 2) - maxFrequency;
   const unsigned int minFreqIndex = static_cast<unsigned int>(std::ceil(minFrequency * freqResolution));
   const unsigned int maxFreqIndex = static_cast<unsigned int>(std::ceil(maxFrequency * freqResolution));
   if (maxFreqIndex >= complexBuffer.size())
@@ -59,9 +57,6 @@ void HULKsDetector::evaluate(EvaluationHandle& eh)
         stopBandPower += abs2;
       }
     }
-    // Normalize power to be independent of sample rate.
-    power /= whistleBandRange;
-    stopBandPower /= stopBandRange;
     if (power / stopBandPower > threshold)
     {
       eh.report(-static_cast<int>(bufferSize) / 2);
