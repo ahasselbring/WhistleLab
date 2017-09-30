@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget* parent)
   updateFileMenu();
 
   evaluateMenu = menuBar()->addMenu(tr("&Evaluate"));
+  evaluateMenu->setEnabled(false);
   auto detectorNames = WhistleDetectorFactoryBase::getDetectorNames();
   for (auto& name : detectorNames)
   {
@@ -50,6 +51,7 @@ MainWindow::MainWindow(QWidget* parent)
   }
 
   trainMenu = menuBar()->addMenu(tr("&Train"));
+  trainMenu->setEnabled(false);
   for (auto& name : detectorNames)
   {
     QAction* action = trainMenu->addAction(QString::fromStdString(name));
@@ -135,11 +137,15 @@ void MainWindow::openFile(const QString& fileName)
   emit fileChanged(fileName, "");
 
   fileCloseAction->setEnabled(true);
+  evaluateMenu->setEnabled(true);
+  trainMenu->setEnabled(true);
 }
 
 void MainWindow::closeFile()
 {
   fileCloseAction->setEnabled(false);
+  evaluateMenu->setEnabled(false);
+  trainMenu->setEnabled(false);
 
   emit fileChanged("", "");
 }
