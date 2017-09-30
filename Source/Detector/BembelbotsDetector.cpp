@@ -64,12 +64,12 @@ void BembelbotsDetector::evaluate(EvaluationHandle& eh)
     // Integrate into existing whistle or start a new detection.
     if (match.available)
     {
+      if (match.lengthMs > minSignalLengthMs && match.maxVolumeDb > volumeThresholdDb)
+      {
+        eh.report(-static_cast<int>(match.lengthMs * eh.getSampleRate() / 1000) + bufferSize);
+      }
       if (peakHz < thresholdHz)
       {
-        if (match.lengthMs > minSignalLengthMs && match.maxVolumeDb > volumeThresholdDb)
-        {
-          eh.report(-static_cast<int>(match.lengthMs * eh.getSampleRate() / 1000) + bufferSize);
-        }
         match.available = false;
       }
       else
