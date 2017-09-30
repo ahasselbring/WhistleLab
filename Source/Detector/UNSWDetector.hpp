@@ -98,6 +98,8 @@ private:
   static constexpr float whistleOkayTime = 0.25f;
   /// the duration for which the spectra may not be accepted before clearing the accepted spectra counter [seconds]
   static constexpr float whistleMissTime = 0.083f;
+  /// the number of buckets for the background zone growing
+  static constexpr unsigned int numBuckets = 10;
   /// the window size of the DFT
   static constexpr unsigned int windowSize = 1024;
   /// decides whether the 2015 or 2016 version should be used

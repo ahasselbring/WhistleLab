@@ -108,7 +108,6 @@ void UNSWDetector::WhistleState::interrogate(const std::vector<std::complex<floa
   unsigned int begin = spectrumWhistleBegin;
   unsigned int end = spectrumWhistleEnd;
   const float backgroundGrowthThreshold = spectrumMean + backgroundThreshold * spectrumStDev;
-  const unsigned int numBuckets = 10;
   unsigned int growSize = (end - begin) / numBuckets;
   for (unsigned int i = 0; i < numBuckets; i++)
   {
