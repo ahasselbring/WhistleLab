@@ -15,7 +15,8 @@
 
 
 AHDetector::AHDetector()
-  : realBuffer(bufferSize)
+  : hannWindow(bufferSize)
+  , realBuffer(bufferSize)
   , complexBuffer(bufferSize / 2 + 1)
   , amplitudeBuffer(bufferSize / 2 + 1)
   , fftPlan(fftw_plan_dft_r2c_1d(bufferSize, realBuffer.data(), reinterpret_cast<fftw_complex*>(complexBuffer.data()), FFTW_ESTIMATE))
@@ -64,6 +65,11 @@ AHDetector::AHDetector()
         ann = nullptr;
       }
     }
+  }
+  for (unsigned int i = 0; i < bufferSize; i++)
+  {
+    const double s = std::sin(M_PI * static_cast<double>(i) / bufferSize);
+    hannWindow[i] = s * s;
   }
 }
 
@@ -115,8 +121,7 @@ void AHDetector::evaluate(EvaluationHandle& eh)
     // 1. Perform discrete fourier (with Hann window) transform to obtain frequency spectrum.
     for (unsigned int i = 0; i < realBuffer.size(); i++)
     {
-      realBuffer[i] = samples[i];
-      realBuffer[i] *= std::pow(std::sin(static_cast<float>(M_PI) * static_cast<float>(i) / bufferSize), 2.0f);
+      realBuffer[i] = samples[i] * hannWindow[i];
     }
     fftw_execute(fftPlan);
 

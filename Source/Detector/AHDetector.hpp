@@ -84,6 +84,8 @@ private:
   static constexpr double minRequiredAmplitude = 0.05;
   /// the minimum factor the amplitude may be below the maximum amplitude before ending boundary search
   static constexpr double minAmplitudeOverMaxAmplitude = 0.01;
+  /// a buffer for the precomputed Hann window
+  std::vector<double> hannWindow;
   /// a buffer for the real input of the FFT
   std::vector<double> realBuffer;
   /// a buffer for the complex output of the FFT
