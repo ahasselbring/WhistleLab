@@ -146,7 +146,7 @@ void UNSWDetector::WhistleState::interrogate(const std::vector<std::complex<floa
     }
   }
   // Determine whether a whistle is found in this buffer.
-  float found = false;
+  bool found = false;
   if (begin < end)
   {
     float filteredMean = 0.f;
